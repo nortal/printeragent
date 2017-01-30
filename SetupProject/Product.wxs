@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"><?define PrinterAgent_TargetDir=$(var.PrinterAgent.TargetDir)?>
+  <Product Id="76f6b8d6-2703-48be-8589-0eab84b8e642" Name="Printer Agent" Language="1033" Version="1.0.0.0" Manufacturer="Nortal" UpgradeCode="87b44ae3-51c9-4ed3-85b6-af14c22aa416">
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+    <UI>
+      <UIRef Id="WixUI_InstallDir" />
+      <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Order="2">1</Publish>
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="2">1</Publish>
+      <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="LaunchApplication">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed</Publish>
+    </UI>
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch Printer Agent" />
+    <Property Id="WixShellExecTarget" Value="[#PrinterAgent.exe]" />
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+    <Property Id="ACRO32">
+      <RegistrySearch Id="CheckAcroRd32" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\AcroRd32.exe" Type="raw" />
+    </Property>
+    <Property Id="ACROBAT">
+      <RegistrySearch Id="CheckAcrobat" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\Acrobat.exe" Type="raw" />
+    </Property>
+
+    <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
+
+    <Condition Message="Adobe Reader must be installed before">
+      Installed OR (ACRO32 OR ACROBAT)
+    </Condition>
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Feature Id="ProductFeature" Title="Printer Agent" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+      <ComponentRef Id="RegistryEntries" />
+    </Feature>
+    
+  </Product>
+
+
+
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="Printer Agent" />
+      </Directory>
+    </Directory>
+  </Fragment>
+
+  <Fragment>
+    <DirectoryRef Id="TARGETDIR">
+      <Component Id="RegistryEntries" Guid="dfff78dc-f2db-40a5-b82e-e9c8eec177ec">
+        <RegistryKey Root="HKLM" Key="Software\Nortal Print Agent" ForceCreateOnInstall="yes">
+
+          <Permission User="Users" GenericAll="yes" />
+        </RegistryKey>
+        <RegistryKey Root="HKLM" Key="Software\Microsoft\Windows\CurrentVersion\Run">
+          <RegistryValue Name="PrintAgent" Type="string" Value="[#PrinterAgent.exe]" />
+        </RegistryKey>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+
+	<Fragment>
+		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+			<Component Id="dummy.gif" Guid="08500e36-40f7-433a-9130-e5864ef529ff">
+			  <File Id="dummy.gif" Name="dummy.gif" Source="$(var.PrinterAgent_TargetDir)dummy.gif" />
+			</Component>
+			<Component Id="icon.ico" Guid="f64b3d3f-38f5-47ab-8eb2-dd9c830f5746">
+			  <File Id="icon.ico" Name="icon.ico" Source="$(var.PrinterAgent_TargetDir)icon.ico" />
+			</Component>
+			<Component Id="PrinterAgent.exe" Guid="4312ad71-edcd-4686-81e0-e33a7785d0ec">
+			  <File Id="PrinterAgent.exe" Name="PrinterAgent.exe" Source="$(var.PrinterAgent_TargetDir)PrinterAgent.exe" />
+			</Component>
+			<Component Id="PrinterAgent.exe.config" Guid="467e0470-3c9a-4c55-ba0a-0903e29f0cf9">
+			  <File Id="PrinterAgent.exe.config" Name="PrinterAgent.exe.config" Source="$(var.PrinterAgent_TargetDir)PrinterAgent.exe.config" />
+			</Component>
+			<Component Id="Newtonsoft.Json.dll" Guid="0c460bb0-89f4-4ae6-a9ee-efa261d5f7fa">
+			  <File Id="Newtonsoft.Json.dll" Name="Newtonsoft.Json.dll" Source="$(var.PrinterAgent_TargetDir)Newtonsoft.Json.dll" />
+			</Component>
+			<Component Id="System.Net.Http.Formatting.dll" Guid="7a6f9c0a-bf08-4577-95c1-7061cc3590d8">
+			  <File Id="System.Net.Http.Formatting.dll" Name="System.Net.Http.Formatting.dll" Source="$(var.PrinterAgent_TargetDir)System.Net.Http.Formatting.dll" />
+			</Component>
+			<Component Id="WPFtoolkitFramework.dll" Guid="49855592-ff7d-44a8-973d-010323707542">
+			  <File Id="WPFtoolkitFramework.dll" Name="WPFtoolkitFramework.dll" Source="$(var.PrinterAgent_TargetDir)WPFtoolkitFramework.dll" />
+			</Component>
+		</ComponentGroup>
+	</Fragment>
+</Wix>
