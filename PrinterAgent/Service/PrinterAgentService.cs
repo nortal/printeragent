@@ -20,6 +20,7 @@ namespace PrinterAgent.Service
         private static readonly bool SkipSignatureVerification = bool.Parse(ConfigurationManager.AppSettings["SkipSignatureVerification"]);
         private static readonly string UseDebugPrinter = ConfigurationManager.AppSettings["UseDebugPrinter"];
         private static readonly string TempFilePrefix = ConfigurationManager.AppSettings["TempFilePrefix"];
+        private static readonly int AdobeHangSeconds = int.Parse(ConfigurationManager.AppSettings["AdobeHangSeconds"]);
 
         public string Print(PrintRequestDto request)
         {
@@ -93,12 +94,14 @@ namespace PrinterAgent.Service
             var proc = new Process();
             proc.StartInfo= infoPrintPdf;
             proc.Start();
-            if (!proc.WaitForExit(10000))
+            
+            if (!proc.WaitForExit(AdobeHangSeconds*1000))
             {
                 proc.CloseMainWindow();
                 proc.Kill();
             }
             
+    
         }
 
         private string GetPrinterName(string documentType)
