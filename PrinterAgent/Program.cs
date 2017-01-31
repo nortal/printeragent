@@ -55,7 +55,7 @@ namespace PrinterAgent
         }
         
 
-        private static void CloseApp(object sender, EventArgs eventArgs)
+        public static void CloseApp(object sender, EventArgs eventArgs)
         {
             Logger.LogInfo("Shutting down");
             MainServiceStarter.Stop();

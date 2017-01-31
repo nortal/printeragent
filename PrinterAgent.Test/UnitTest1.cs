@@ -12,11 +12,11 @@ namespace PrinterAgent.Test
         public void CreateHtml()
         {
             var bytes = Serialize(@"C:\Users\jevgenisa\Desktop\dontworry1.pdf");
-            var reqContent = Convert.ToBase64String(bytes);
-            //var reqContent = Serialize(@"C: \Users\jevgenisa\Desktop\Learning Material\Java\Java study material\OCP Java SE 7 Programmer II Certification Guide.pdf");
+            //var reqContent = Convert.ToBase64String(bytes);
+            //var reqContent = Convert.ToBase64String(Serialize(@"C: \Users\jevgenisa\Desktop\Learning Material\Java\Java study material\ch08.pdf"));
             var htmlFilePath = @"C: \Users\jevgenisa\Desktop\printagentimage.html";
-            //var reqContent = Convert.ToBase64String(Serialize(@"C:\Users\jevgenisa\Desktop\mb2-710.pdf"));
-            
+            var reqContent = Convert.ToBase64String(Serialize(@"C:\Users\jevgenisa\Desktop\MB2-710 Jevgeni Savostkin.pdf"));
+
             var content = "<img src=\"http://localhost:8888/api/print-jobs/dummy.gif?document=" + reqContent+ 
                 "&signature=qwerty" +
                  "&document-type=REFERRAL" +

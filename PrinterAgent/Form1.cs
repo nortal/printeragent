@@ -27,10 +27,12 @@ namespace PrinterAgent
             this.Load += Form1_Load;
         }
 
-       public void Form1_Load(object sender, EventArgs e)
+        public void Form1_Load(object sender, EventArgs e)
         {
             //this.notifyIcon1.Visible = true;
             this.notifyIcon1.Text = AppName;
+            this.notifyIcon1.ContextMenu = new ContextMenu(new MenuItem[] {new MenuItem("Exit", Program.CloseApp)});
         }
+        
     }
 }
