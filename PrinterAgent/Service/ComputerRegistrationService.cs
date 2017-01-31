@@ -16,7 +16,7 @@ namespace PrinterAgent.Service
             var id = RegistryDataResolver.GetStoredPrinterAgentId();
             if (!string.IsNullOrEmpty(id))
                 return id;
-            Logger.LogInfo("Agent id does not exist in register. Registering the computer on a backend service.");
+            Logger.LogInfo("Agent id does not exist in registry. Registering the computer on a backend service.");
             try
             {
                 return Register();

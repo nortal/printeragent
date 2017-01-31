@@ -70,7 +70,7 @@ namespace PrinterAgent.Service
             var adobePath = RegistryDataResolver.GetAcrobatPath();
 
             if (string.IsNullOrEmpty(adobePath))
-                throw new Exception("Adobe not installed");
+                throw new Exception("Adobe is not installed");
 
 
             ProcessStartInfo infoPrintPdf = new ProcessStartInfo();

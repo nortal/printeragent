@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"><?define PrinterAgent_TargetDir=$(var.PrinterAgent.TargetDir)?>
-  <Product Id="76f6b8d6-2703-48be-8589-0eab84b8e642" Name="Printer Agent" Language="1033" Version="1.0.0.0" Manufacturer="Nortal" UpgradeCode="87b44ae3-51c9-4ed3-85b6-af14c22aa416">
-    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+  <Product Id="76f6b8d6-2703-48be-8589-0eab84b8e642" Name="Printer Agent" Language="1033" Version="!(bind.FileVersion.PrinterAgent.exe)" Manufacturer="Nortal" UpgradeCode="87b44ae3-51c9-4ed3-85b6-af14c22aa416">
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Description="Version:!(bind.FileVersion.PrinterAgent.exe)" />
     <UI>
       <UIRef Id="WixUI_InstallDir" />
       <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Order="2">1</Publish>
@@ -33,7 +33,7 @@
     </Feature>
     
   </Product>
-
+  
 
 
   <Fragment>
@@ -80,6 +80,9 @@
 			</Component>
 			<Component Id="WPFtoolkitFramework.dll" Guid="49855592-ff7d-44a8-973d-010323707542">
 			  <File Id="WPFtoolkitFramework.dll" Name="WPFtoolkitFramework.dll" Source="$(var.PrinterAgent_TargetDir)WPFtoolkitFramework.dll" />
+			</Component>
+			<Component Id="System.Management.dll" Guid="7ec84889-3925-4b31-a712-f1c37b90929d">
+			  <File Id="System.Management.dll" Name="System.Management.dll" Source="$(var.PrinterAgent_TargetDir)System.Management.dll" />
 			</Component>
 		</ComponentGroup>
 	</Fragment>

@@ -56,4 +56,14 @@
 	<Target Name="AfterBuild">
 	</Target>
 	-->
+
+  <Target Name="AfterBuild">
+
+    <GetAssemblyIdentity AssemblyFiles="$(SolutionDir)\PrinterAgent\bin\$(Configuration)\PrinterAgent.exe">
+      <Output TaskParameter="Assemblies" ItemName="AssemblyVersion"/>
+    </GetAssemblyIdentity>
+
+    <Copy SourceFiles="$(TargetDir)\$(OutputName).msi" DestinationFiles="$(TargetDir)\$(OutputName)_%(AssemblyVersion.Version).msi" />
+    <Delete Files="$(TargetDir)\$(OutputName).msi" />
+  </Target>
 </Project>

@@ -9,7 +9,7 @@ namespace PrinterAgent.Service
 {
     public class PrinterConfigurationService
     {
-        private static readonly string HostUrl = ConfigurationManager.AppSettings["PrinterConfigurationHostUrl"];
+        private static readonly string HostUrl = ConfigurationManager.AppSettings["PrinterConfigurationBaseUrl"];
 
         private static readonly bool LogPrintConfRequests = bool.Parse(ConfigurationManager.AppSettings["LogPrintConfRequests"]);
         private HttpClient CreateClient()
@@ -22,6 +22,7 @@ namespace PrinterAgent.Service
                 client = new HttpClient();
 
             client.BaseAddress = new Uri(HostUrl);
+            
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             
@@ -32,7 +33,7 @@ namespace PrinterAgent.Service
         {
             using (var client = CreateClient())
             {
-                var response = client.PutAsJsonAsync("/printer-conf/api/computers/agent", conf).Result;
+                var response = client.PutAsJsonAsync("api/computers/agent", conf).Result;
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -48,7 +49,7 @@ namespace PrinterAgent.Service
             using (var client = CreateClient())
             {
                 var response =
-                    client.PostAsJsonAsync<PrintConfigurationDto>("/printer-conf/api/computers/agent/" + printerAgentId, conf).Result;
+                    client.PostAsJsonAsync<PrintConfigurationDto>("api/computers/agent/" + printerAgentId, conf).Result;
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -63,7 +64,7 @@ namespace PrinterAgent.Service
         {
             using (var client = CreateClient())
             {
-                var response = client.GetAsync("/printer-conf/api/computers/agent/" + printerAgentId).Result;
+                var response = client.GetAsync("api/computers/agent/" + printerAgentId).Result;
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -79,7 +80,7 @@ namespace PrinterAgent.Service
         {
             using (var client = CreateClient())
             {
-                var response = client.PostAsJsonAsync("/printer-conf/api/signature/verify", request).Result;
+                var response = client.PostAsJsonAsync("api/signature/verify", request).Result;
 
                 if (response.IsSuccessStatusCode)
                 {
