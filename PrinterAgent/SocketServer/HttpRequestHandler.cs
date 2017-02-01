@@ -44,6 +44,7 @@ namespace PrinterAgent.SocketServer
             }
             catch (Exception e)
             {
+                Logger.LogError(e.ToString());
                 return ForbiddenResponse(e);
             }
             return DummyImageResponse(printerName);
@@ -75,10 +76,12 @@ namespace PrinterAgent.SocketServer
             }
             catch (ForbiddenException e)
             {
+                Logger.LogError(e.ToString());
                 return ForbiddenResponse(e);
             }
             catch (Exception e)
             {
+                Logger.LogErrorToPrintConf(e.ToString());
                 return ForbiddenResponse(e);
             }
             return DummyImageResponse(printerName);
@@ -104,7 +107,6 @@ namespace PrinterAgent.SocketServer
 
         private TcpMessageHttpResponse ForbiddenResponse(Exception e)
         {
-            Logger.LogError(e.ToString());
             return new TcpMessageHttpResponse() { status = "403 Forbidden" };
         }
 

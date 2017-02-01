@@ -14,13 +14,7 @@ namespace PrinterAgent.Service
         private bool isRunning;
         readonly PrinterConfigurationService printConfService = new PrinterConfigurationService();
         readonly ConfigurationRegistrationService registrationService = new ConfigurationRegistrationService();
-        private Guid instanceId;
-
-        public ConfigurationPoller()
-        {
-            this.instanceId = Guid.NewGuid();
-        }
-
+        
         public void Poll()
         {
             isRunning = true;
@@ -28,7 +22,7 @@ namespace PrinterAgent.Service
             {
                 try
                 {
-                    Logger.LogInfo("Configuration poller", instanceId);
+                    Logger.LogInfo("Configuration sync");
                     var id = registrationService.GetPrinterAgentId();
                     if (!string.IsNullOrEmpty(id))
                     {
@@ -38,7 +32,7 @@ namespace PrinterAgent.Service
                 }
                 catch (Exception e)
                 {
-                    Logger.LogError("Configuration poller received exception "+e, instanceId);
+                    Logger.LogErrorToPrintConf("Configuration poller received exception "+e);
                 }
 
                 Thread.Sleep(PollingInterval*60*1000);
@@ -62,7 +56,7 @@ namespace PrinterAgent.Service
             var localPrinters = localConf?.Printers?.Select(x => x.Name).ToList().OrderBy(x => x).ToList() ?? new List<string>();
             if (!backendPrinters.SequenceEqual(localPrinters))
             {
-                Logger.LogInfo("Local printers: "+string.Join(",", localPrinters), instanceId);
+                Logger.LogInfo("Updating backend configuration with the local printers: "+string.Join(",", localPrinters));
                 PrintConfiguration.Instance = printConfService.UpdateConfiguration(id, localConf);
             }
 

@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using PrinterAgent.DTO;
 using PrinterAgent.Util;
 
@@ -55,7 +56,7 @@ namespace PrinterAgent.Service
                 {
                     return response.Content.ReadAsAsync<PrintConfigurationDto>().Result;
                 }
-                Logger.LogError("UpdateConfiguration got unsuccessful response: " + response);
+                Logger.LogErrorToPrintConf("UpdateConfiguration got unsuccessful response: " + response);
                 return null;
             }
         }
@@ -71,7 +72,7 @@ namespace PrinterAgent.Service
                     return response.Content.ReadAsAsync<PrintConfigurationDto>().Result;
                 }
 
-                Logger.LogError("GetConfiguration got unsuccessful response: " + response);
+                Logger.LogErrorToPrintConf("GetConfiguration got unsuccessful response: " + response);
                 return null;
             }
         }
@@ -86,8 +87,24 @@ namespace PrinterAgent.Service
                 {
                     return response.Content.ReadAsAsync<SignatureVerificationResponseDto>().Result;
                 }
-                Logger.LogError("CheckSignature got unsuccessful response: " + response);
+                Logger.LogErrorToPrintConf("CheckSignature got unsuccessful response: " + response);
                 return null;
+            }
+        }
+
+        public void SendLog(string printerAgentId, string log)
+        {
+            using (var client = CreateClient())
+            {
+                var requestUrl = string.Format("/api/computers/agent/{0}/logs", printerAgentId);
+                
+                var response = client.PutAsync(requestUrl, new StringContent(log, Encoding.UTF8)).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return;
+                }
+                Logger.LogError("SendLog got unsuccessful response: " + response);
             }
         }
     }

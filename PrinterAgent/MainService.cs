@@ -56,19 +56,12 @@ namespace PrinterAgent
         private SocketServer.SocketServer server;
 
         private bool isLoggedIn;
-        private Guid instanceId;
-
         public string Status;
-
-        public MainService()
-        {
-            this.instanceId = Guid.NewGuid();
-        }
 
         public void Start()
         {
             isLoggedIn = true;
-            Logger.LogInfo("Main service started", instanceId);
+            Logger.LogInfo("Main service started");
             Status = "Getting networking port...";
             confPoller = new ConfigurationPoller();
             new Thread(() => confPoller.Poll()).Start();
@@ -101,7 +94,7 @@ namespace PrinterAgent
             confPoller?.Stop();
             server?.Stop();
             tempFilesRemover?.Stop();
-            Logger.LogInfo("Main service stopped", instanceId);
+            Logger.LogInfo("Main service stopped");
         }
 
     }

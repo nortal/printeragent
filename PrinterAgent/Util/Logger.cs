@@ -1,36 +1,44 @@
 ﻿using System;
 using System.Diagnostics;
+using PrinterAgent.Service;
 
 namespace PrinterAgent.Util
 {
     public class Logger
     {
-        public static void LogError(string message, Guid? instanceId = null)
+        private static PrinterConfigurationService confService = new PrinterConfigurationService();
+
+        public static void LogErrorToPrintConf(string message)
+        {
+            var id = PrintConfiguration.Instance?.Secret ?? RegistryDataResolver.GetStoredPrinterAgentId();
+            confService.SendLog(id, ComposeMessage("ERROR", message));
+            LogError(message);
+        }
+
+        public static void LogError(string message)
         {
             using (EventLog eventLog = new EventLog("Application"))
             {
                 eventLog.Source = "Application";
-                eventLog.WriteEntry(ComposeMessage(message, instanceId), EventLogEntryType.Error);
+                eventLog.WriteEntry(ComposeMessage("ERROR", message), EventLogEntryType.Error);
             }
-            //Trace.TraceError(ComposeMessage(message, instanceId));
-
+            
         }
 
-        public static void LogInfo(string message, Guid? instanceId=null)
+        public static void LogInfo(string message)
         {
             using (EventLog eventLog = new EventLog("Application"))
             {
                 eventLog.Source = "Application";
-                eventLog.WriteEntry(ComposeMessage(message, instanceId), EventLogEntryType.Information);
+                eventLog.WriteEntry(ComposeMessage("INFO",message), EventLogEntryType.Information);
             }
-            //Trace.TraceInformation(ComposeMessage(message, instanceId));
+            
         }
 
 
-        public static string ComposeMessage(string message, Guid? instanceId = null)
+        public static string ComposeMessage(string type, string message)
         {
-            return string.Format("{0} - {1}", instanceId, message);
-            //return string.Format("{0: yyyy/MM/dd HH:mm:ss} - {1} - {2}", DateTime.Now, instanceId, message);
+            return string.Format("{0}: {1}\\{2}{3}{4}", type, Environment.UserDomainName, Environment.UserName, Environment.NewLine, message);
         }
     }
 }

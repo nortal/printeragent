@@ -13,7 +13,7 @@ namespace PrinterAgent.Util
             }
             catch (CryptographicException e)
             {
-                Logger.LogError(e.ToString());
+                Logger.LogErrorToPrintConf(e.ToString());
                 return null;
             }
         }
@@ -26,7 +26,7 @@ namespace PrinterAgent.Util
             }
             catch (CryptographicException e)
             {
-                Logger.LogError(e.ToString());
+                Logger.LogErrorToPrintConf(e.ToString());
                 return null;
             }
         }
