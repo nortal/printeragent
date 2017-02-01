@@ -90,6 +90,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DTO\PingRequestDto.cs" />
     <Compile Include="DTO\PrintConfigurationDto.cs" />
     <Compile Include="DTO\PrintRequestDto.cs" />
     <Compile Include="DTO\SignatureVerificationDto.cs" />

@@ -22,9 +22,31 @@ namespace PrinterAgent.SocketServer
             {
                 case "GET /api/print-jobs/dummy.gif":
                     return Print();
-                
+                case "GET /api/print-jobs/ping.gif":
+                    return Ping();
+
             }
             return new TcpMessageHttpResponse() { status = "404 Not Found" };
+        }
+
+
+        private TcpMessageHttpResponse Ping()
+        {
+            string printerName;
+            try
+            {
+                var pingRequest = new PingRequestDto
+                {
+                    DocumentType =
+                        request.parameters.ContainsKey("document-type") ? request.parameters["document-type"] : null
+                };
+                printerName = new PrinterAgentService().Ping(pingRequest);
+            }
+            catch (Exception e)
+            {
+                return ForbiddenResponse(e);
+            }
+            return DummyImageResponse(printerName);
         }
 
         private TcpMessageHttpResponse Print()
@@ -53,28 +75,37 @@ namespace PrinterAgent.SocketServer
             }
             catch (ForbiddenException e)
             {
-                Logger.LogError(e.ToString());
-                return new TcpMessageHttpResponse() { status = "403 Forbidden"};
+                return ForbiddenResponse(e);
             }
             catch (Exception e)
             {
-                Logger.LogError(e.ToString());
-                return new TcpMessageHttpResponse() { status = "403 Forbidden"};
+                return ForbiddenResponse(e);
             }
+            return DummyImageResponse(printerName);
+            
+        }
 
+        private TcpMessageHttpResponse DummyImageResponse(string printerName)
+        {
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "dummy.gif");
             var content = File.ReadAllBytes(path);
             Logger.LogInfo("Print agent is sending a response to TCP");
             return new TcpMessageHttpResponse()
             {
                 body = content,
-                headers = new Dictionary<string,string>()
+                headers = new Dictionary<string, string>()
                 {
                     {"Content-Type","image/gif"},
                     {"Selected-Printer", printerName}
                 },
                 status = "200 OK"
             };
+        }
+
+        private TcpMessageHttpResponse ForbiddenResponse(Exception e)
+        {
+            Logger.LogError(e.ToString());
+            return new TcpMessageHttpResponse() { status = "403 Forbidden" };
         }
 
         public class TcpMessageHttpRequest

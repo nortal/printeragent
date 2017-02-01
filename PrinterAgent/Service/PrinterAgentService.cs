@@ -28,7 +28,7 @@ namespace PrinterAgent.Service
             if (!SkipSignatureVerification)
                 VerifySignature(request);
 
-            string printerName = string.IsNullOrEmpty(UseDebugPrinter) ? GetPrinterName(request.DocumentType) : UseDebugPrinter;
+            string printerName = GetPrinterName(request.DocumentType);
             
             Logger.LogInfo("Printing using printer: "+ printerName);
             Print(printerName, request.Document);
@@ -106,6 +106,9 @@ namespace PrinterAgent.Service
 
         private string GetPrinterName(string documentType)
         {
+            if (!string.IsNullOrEmpty(UseDebugPrinter))
+                return UseDebugPrinter;
+
             var conf = PrintConfiguration.Instance;
             var printer = conf.Printers?.Find(x => x.DocumentTypes!=null && x.DocumentTypes.Contains(documentType));
 
@@ -150,8 +153,10 @@ namespace PrinterAgent.Service
         }
 
 
-
-
+        public string Ping(PingRequestDto pingRequest)
+        {
+            return GetPrinterName(pingRequest.DocumentType);
+        }
     }
     
 }
