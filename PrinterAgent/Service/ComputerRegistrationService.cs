@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing.Printing;
+using System.Net;
+using System.Net.Sockets;
 using PrinterAgent.DTO;
 using PrinterAgent.Util;
 
@@ -33,11 +35,30 @@ namespace PrinterAgent.Service
             var request = new PrintConfigurationDto();
             request.Printers = new List<PrinterDto>();
             request.Name = Environment.MachineName;
+            request.AdditionalInfo = GetLocalIpAddress();
             foreach (string printer in PrinterSettings.InstalledPrinters)
             {
                 request.Printers.Add(new PrinterDto() { Name = printer });
             }
             return request;
+        }
+
+        private string GetLocalIpAddress()
+        {
+            try
+            {
+                var host = Dns.GetHostEntry(Dns.GetHostName());
+                foreach (var ip in host.AddressList)
+                {
+                    if (ip.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        return ip.ToString();
+                    }
+                }
+            }
+            catch
+            { }
+            return null;
         }
 
         private string Register()
