@@ -25,7 +25,7 @@ namespace PrinterAgent.Service
             client.BaseAddress = new Uri(HostUrl);
             
             client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            
             
             return client;
         }
@@ -96,7 +96,7 @@ namespace PrinterAgent.Service
         {
             using (var client = CreateClient())
             {
-                var requestUrl = string.Format("/api/computers/agent/{0}/logs", printerAgentId);
+                var requestUrl = string.Format("api/computers/agent/{0}/logs", printerAgentId);
                 
                 var response = client.PutAsync(requestUrl, new StringContent(log, Encoding.UTF8)).Result;
 
