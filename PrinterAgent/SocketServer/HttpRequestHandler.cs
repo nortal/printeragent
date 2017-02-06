@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
+using System.Net.Http;
 using PrinterAgent.DTO;
 using PrinterAgent.Service;
 using PrinterAgent.Util;
@@ -20,9 +23,9 @@ namespace PrinterAgent.SocketServer
         {
             switch (request.method+" "+request.query)
             {
-                case "GET /api/print-jobs/dummy.gif":
+                case "GET /api/print-jobs/dummy.png":
                     return Print();
-                case "GET /api/print-jobs/ping.gif":
+                case "GET /api/print-jobs/ping.png":
                     return Ping();
 
             }
@@ -32,7 +35,6 @@ namespace PrinterAgent.SocketServer
 
         private TcpMessageHttpResponse Ping()
         {
-            string printerName;
             try
             {
                 var pingRequest = new PingRequestDto
@@ -40,14 +42,14 @@ namespace PrinterAgent.SocketServer
                     DocumentType =
                         request.parameters.ContainsKey("document-type") ? request.parameters["document-type"] : null
                 };
-                printerName = new PrinterAgentService().Ping(pingRequest);
+                new PrinterAgentService().Ping(pingRequest);
             }
             catch (Exception e)
             {
                 Logger.LogError(e.ToString());
                 return ForbiddenResponse(e);
             }
-            return DummyImageResponse(printerName);
+            return PingImageResponse();
         }
 
         private TcpMessageHttpResponse Print()
@@ -84,26 +86,38 @@ namespace PrinterAgent.SocketServer
                 Logger.LogErrorToPrintConf(e.ToString());
                 return ForbiddenResponse(e);
             }
-            return DummyImageResponse(printerName);
+            return PrinterNameImageResponse(printerName);
             
         }
 
-        private TcpMessageHttpResponse DummyImageResponse(string printerName)
+        private TcpMessageHttpResponse PrinterNameImageResponse(string printerName)
         {
-            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "dummy.gif");
+            var content = ImageDrawer.DrawImage(printerName);
+            return ImageResponse(content);
+        }
+
+        private TcpMessageHttpResponse PingImageResponse()
+        {
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "dummy.png");
             var content = File.ReadAllBytes(path);
+            return ImageResponse(content);
+        }
+
+        private TcpMessageHttpResponse ImageResponse(byte[] imgContent)
+        {
             Logger.LogInfo("Print agent is sending a response to TCP");
             return new TcpMessageHttpResponse()
             {
-                body = content,
+                body = imgContent,
                 headers = new Dictionary<string, string>()
                 {
-                    {"Content-Type","image/gif"},
-                    {"Selected-Printer", printerName}
+                    {"Content-Type","image/png"}
                 },
                 status = "200 OK"
             };
         }
+
+        
 
         private TcpMessageHttpResponse ForbiddenResponse(Exception e)
         {

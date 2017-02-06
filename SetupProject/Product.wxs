@@ -24,7 +24,7 @@
       Installed OR (ACRO32 OR ACROBAT)
     </Condition>
     
-    <MajorUpgrade Schedule="afterInstallValidate" AllowDowngrades="no" DowngradeErrorMessage="A newer version of [ProductName] is already installed." AllowSameVersionUpgrades="yes"/>
+    <MajorUpgrade Schedule="afterInstallValidate" AllowDowngrades="no" DowngradeErrorMessage="A newer version of [ProductName] is already installed." AllowSameVersionUpgrades="yes" />
     <MediaTemplate EmbedCab="yes" />
 
     <Feature Id="ProductFeature" Title="Printer Agent" Level="1">
@@ -60,9 +60,6 @@
 
 	<Fragment>
 		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-			<Component Id="dummy.gif" Guid="08500e36-40f7-433a-9130-e5864ef529ff">
-			  <File Id="dummy.gif" Name="dummy.gif" Source="$(var.PrinterAgent_TargetDir)dummy.gif" />
-			</Component>
 			<Component Id="icon.ico" Guid="f64b3d3f-38f5-47ab-8eb2-dd9c830f5746">
 			  <File Id="icon.ico" Name="icon.ico" Source="$(var.PrinterAgent_TargetDir)icon.ico" />
 			</Component>
@@ -83,6 +80,9 @@
 			</Component>
 			<Component Id="System.Management.dll" Guid="7ec84889-3925-4b31-a712-f1c37b90929d">
 			  <File Id="System.Management.dll" Name="System.Management.dll" Source="$(var.PrinterAgent_TargetDir)System.Management.dll" />
+			</Component>
+			<Component Id="dummy.png" Guid="737f7bd1-2fab-4fa8-a0d3-61116588d7be">
+			  <File Id="dummy.png" Name="dummy.png" Source="$(var.PrinterAgent_TargetDir)dummy.png" />
 			</Component>
 		</ComponentGroup>
 	</Fragment>
