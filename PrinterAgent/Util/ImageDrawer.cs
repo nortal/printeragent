@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
@@ -13,11 +14,14 @@ namespace PrinterAgent.Util
 {
     public static class ImageDrawer
     {
+        private static readonly string FontFamily = ConfigurationManager.AppSettings["FontFamily"];
+        private static readonly string FontColor = ConfigurationManager.AppSettings["FontColor"];
+        private static readonly int FontSizePixels = int.Parse(ConfigurationManager.AppSettings["FontSizePixels"]);
 
         public static byte[] DrawImage(string text)
         {
-            var fontFamily = new FontFamily("Verdana");
-            var font = new Font(fontFamily, 11, FontStyle.Bold, GraphicsUnit.Pixel);
+            var fontFamily = new FontFamily(FontFamily);
+            var font = new Font(fontFamily, FontSizePixels, FontStyle.Bold, GraphicsUnit.Pixel);
             SizeF textSize;
 
             using (Bitmap bitmap = new Bitmap(1,1))
@@ -32,7 +36,7 @@ namespace PrinterAgent.Util
                 
                 drawing.Clear(Color.Transparent);
                 drawing.TextRenderingHint = TextRenderingHint.AntiAlias;
-                Brush textBrush = new SolidBrush(Color.FromArgb(124, 110, 12));
+                Brush textBrush = new SolidBrush(ColorTranslator.FromHtml(FontColor));
                 drawing.DrawString(text, font, textBrush, 0, 0);
                 return ImageToBytes(bitmap, ImageFormat.Png);
             }
