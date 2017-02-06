@@ -52,7 +52,6 @@ namespace PrinterAgent
     {
         
         private ConfigurationPoller confPoller;
-        private TempFilesRemover tempFilesRemover;
         private SocketServer.SocketServer server;
 
         private bool isLoggedIn;
@@ -83,9 +82,6 @@ namespace PrinterAgent
 
             Status = "Local server started";
 
-            tempFilesRemover = new TempFilesRemover();
-            new Thread(tempFilesRemover.Start).Start();
-
         }
         
         public void Stop()
@@ -93,7 +89,6 @@ namespace PrinterAgent
             isLoggedIn = false;
             confPoller?.Stop();
             server?.Stop();
-            tempFilesRemover?.Stop();
             Logger.LogInfo("Main service stopped");
         }
 

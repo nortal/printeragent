@@ -55,19 +55,15 @@ namespace PrinterAgent.Service
             }
             catch (Exception e)
             {
+                RemoveFile(fileName);
                 throw e;
             }
-            /*
-            finally
-            {
-                File.Delete(fileName);
-            }
-            */
+            
         }
 
         private void PrintWithAdobe(string printerName, string fileName)
         {
-
+            
             var adobePath = RegistryDataResolver.GetAcrobatPath();
 
             if (string.IsNullOrEmpty(adobePath))
@@ -89,21 +85,41 @@ namespace PrinterAgent.Service
             infoPrintPdf.CreateNoWindow = true;
             infoPrintPdf.UseShellExecute = false;
             infoPrintPdf.ErrorDialog = false;
+            infoPrintPdf.RedirectStandardOutput = true;
+            infoPrintPdf.RedirectStandardError = true;
             infoPrintPdf.WindowStyle = ProcessWindowStyle.Hidden;
 
             var proc = new Process();
             proc.StartInfo= infoPrintPdf;
             proc.Start();
+            new Thread(() => WaitAdobe(proc, fileName)).Start();
             
-            if (!proc.WaitForExit(AdobeHangSeconds*1000))
-            {
-                proc.CloseMainWindow();
-                proc.Kill();
-            }
-            
-    
         }
 
+        private void WaitAdobe(Process process, string fileName)
+        {
+            try
+            {
+                if (!process.WaitForExit(AdobeHangSeconds*1000))
+                {
+                    process.CloseMainWindow();
+                    process.Kill();
+                }
+            }
+            catch
+            {
+            }
+            finally
+            {
+                RemoveFile(fileName);
+            }
+        }
+
+        private void RemoveFile(string fileName)
+        {
+            if (File.Exists(fileName))
+                File.Delete(fileName);
+        }
         private string GetPrinterName(string documentType)
         {
             if (!string.IsNullOrEmpty(UseDebugPrinter))

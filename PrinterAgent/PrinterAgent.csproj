@@ -109,7 +109,6 @@
     <Compile Include="Service\ConfigurationPoller.cs" />
     <Compile Include="Service\PrinterAgentService.cs" />
     <Compile Include="Service\PrinterConfigurationService.cs" />
-    <Compile Include="Service\TempFilesRemover.cs" />
     <Compile Include="SocketServer\HttpRequestHandler.cs" />
     <Compile Include="SocketServer\SocketServer.cs" />
     <Compile Include="SocketServer\TcpRequestHandler.cs" />
