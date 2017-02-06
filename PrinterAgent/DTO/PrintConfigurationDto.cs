@@ -18,6 +18,9 @@ namespace PrinterAgent.DTO
         [JsonProperty("agentListeningPort", NullValueHandling = NullValueHandling.Ignore)]
         public int? AgentListeningPort { get; set; }
 
+        [JsonProperty("agentVersion", NullValueHandling = NullValueHandling.Ignore)]
+        public string AgentVersion { get; set; }
+
         [JsonProperty("printers")]
         public List<PrinterDto> Printers { get; set; }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing.Printing;
 using System.Net;
 using System.Net.Sockets;
+using System.Windows.Forms;
 using PrinterAgent.DTO;
 using PrinterAgent.Util;
 
@@ -35,6 +36,7 @@ namespace PrinterAgent.Service
             request.Printers = new List<PrinterDto>();
             request.Name = Environment.MachineName;
             request.AdditionalInfo = GetLocalIpAddress();
+            request.AgentVersion = Application.ProductVersion;
             foreach (string printer in PrinterSettings.InstalledPrinters)
             {
                 request.Printers.Add(new PrinterDto() { Name = printer });
