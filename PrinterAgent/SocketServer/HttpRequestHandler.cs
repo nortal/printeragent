@@ -46,7 +46,7 @@ namespace PrinterAgent.SocketServer
             }
             catch (Exception e)
             {
-                Logger.LogError(e.ToString());
+                Logger.LogErrorToPrintConf(e.ToString());
                 return ForbiddenResponse(e);
             }
             return PingImageResponse();
