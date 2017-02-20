@@ -25,6 +25,7 @@
     <Compile Include="Product.wxs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="shortcut_icon.ico" />
     <Content Include="Setup.wax" />
   </ItemGroup>
   <ItemGroup>

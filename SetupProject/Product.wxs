@@ -106,9 +106,11 @@
   <Fragment>
     <ComponentGroup Id="ProductMenuComponents" Directory="ApplicationProgramsFolder">
         <Component Id="ApplicationShortcut" Guid="{AE75A17D-3EBF-4B68-AA32-73D18D983317}">
-            <Shortcut Id="ApplicationStartMenuShortcut" Name="PrinterAgent" Description="PrinterAgent" Target="[#PrinterAgent.exe]" WorkingDirectory="APPLICATIONROOTDIRECTORY" />
-            <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall" />
-            <RegistryValue Root="HKCU" Key="Software\Nortal\PrinterAgent" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+          <Shortcut Id="ApplicationStartMenuShortcut" Name="PrinterAgent" Description="PrinterAgent" Target="[#PrinterAgent.exe]" WorkingDirectory="APPLICATIONROOTDIRECTORY">
+            <Icon Id="ShortcutIcon" SourceFile="shortcut_icon.ico"/>  
+          </Shortcut>
+          <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall" />
+          <RegistryValue Root="HKCU" Key="Software\Nortal\PrinterAgent" Name="installed" Type="integer" Value="1" KeyPath="yes" />
         </Component>
     </ComponentGroup>
   </Fragment>
