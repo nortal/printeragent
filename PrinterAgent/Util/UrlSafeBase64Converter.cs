@@ -1,10 +1,11 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace PrinterAgent.Util
 {
-    static class UrlSafeBase64Converter
+    public class UrlSafeBase64Converter : JsonConverter
     {
-        public static byte[] ConvertFromBase64Url(string input)
+        private byte[] ConvertFromBase64Url(string input)
         {
             string incoming = input.Replace('_', '/').Replace('-', '+');
             switch (input.Length % 4)
@@ -13,17 +14,34 @@ namespace PrinterAgent.Util
                 case 3: incoming += "="; break;
             }
             byte[] bytes = Convert.FromBase64String(incoming);
-            //string originalText = Encoding.ASCII.GetString(bytes);
             return bytes;
 
         }
 
-        public static string ConvertToBase64Url(byte[] bytes)
+        private string ConvertToBase64Url(byte[] bytes)
         {
             char[] padding = { '=' };
             string base64String= Convert.ToBase64String(bytes).TrimEnd(padding).Replace('+', '-').Replace('/', '_');
             return base64String;
 
+        }
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            writer.WriteValue(value);
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.Value != null)
+                return ConvertFromBase64Url((string) reader.Value);
+
+            return null;
+        }
+
+        public override bool CanConvert(Type objectType)
+        {
+            return objectType == typeof(string);
         }
     }
 }

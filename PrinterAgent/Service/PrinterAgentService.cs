@@ -5,7 +5,6 @@ using System.IO;
 using System.Threading;
 using PrinterAgent.DTO;
 using PrinterAgent.Util;
-using WPFtoolkitFramework.Funciones_y_metodos;
 
 
 namespace PrinterAgent.Service
@@ -13,7 +12,6 @@ namespace PrinterAgent.Service
     public class PrinterAgentService
     {
         private static readonly bool SkipSignatureVerification = bool.Parse(ConfigurationManager.AppSettings["SkipSignatureVerification"]);
-        private static readonly string UseDebugPrinter = ConfigurationManager.AppSettings["UseDebugPrinter"];
         private static readonly string TempFilePrefix = ConfigurationManager.AppSettings["TempFilePrefix"];
         private static readonly int AdobeHangSeconds = int.Parse(ConfigurationManager.AppSettings["AdobeHangSeconds"]);
 
@@ -21,7 +19,6 @@ namespace PrinterAgent.Service
 
         public string Print(PrintRequestDto request)
         {
-            VerifyParameters(request);
             if (!SkipSignatureVerification)
                 VerifySignature(request);
 
@@ -31,13 +28,6 @@ namespace PrinterAgent.Service
             Print(printerName, request.Document);
 
             return printerName;
-        }
-
-        private void VerifyParameters(PrintRequestDto request)
-        {
-            var missingFields = request.FieldsNullValues();
-            if (missingFields.Count > 0)
-                throw new Exception("Required parameters are missing: "+string.Join(",",missingFields));
         }
         
         private void Print(string printerName, byte[] document)
@@ -119,9 +109,6 @@ namespace PrinterAgent.Service
         }
         private string GetPrinterName(string documentType)
         {
-            if (!string.IsNullOrEmpty(UseDebugPrinter))
-                return UseDebugPrinter;
-
             var conf = printConfService.GetConfiguration();
             var printer = (conf?.DocTypeMappings!=null && conf.DocTypeMappings.ContainsKey(documentType)) ? conf.DocTypeMappings[documentType] : null;
 

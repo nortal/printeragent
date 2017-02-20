@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Net.Http;
+using Newtonsoft.Json;
 using PrinterAgent.DTO;
 using PrinterAgent.Service;
 using PrinterAgent.Util;
@@ -37,11 +38,9 @@ namespace PrinterAgent.SocketServer
         {
             try
             {
-                var pingRequest = new PingRequestDto
-                {
-                    DocumentType =
-                        request.parameters.ContainsKey("document-type") ? request.parameters["document-type"] : null
-                };
+                string json = JsonConvert.SerializeObject(request.parameters, Formatting.Indented);
+                var pingRequest = JsonConvert.DeserializeObject<PingRequestDto>(json);
+
                 new PrinterAgentService().Ping(pingRequest);
             }
             catch (Exception e)
@@ -57,18 +56,8 @@ namespace PrinterAgent.SocketServer
             string printerName;
             try
             {
-                var printRequest = new PrintRequestDto()
-                {
-                    Document =
-                    request.parameters.ContainsKey("document")
-                        ? UrlSafeBase64Converter.ConvertFromBase64Url(request.parameters["document"])
-                        : null,
-                    DocumentType = request.parameters.ContainsKey("document-type") ? request.parameters["document-type"] : null,
-                    HashSignature = request.parameters.ContainsKey("signature") ? request.parameters["signature"] : null,
-                    SignatureAlgorithm = request.parameters.ContainsKey("signature-algorithm") ? request.parameters["signature-algorithm"] : null,
-                    HashAlgorithm = request.parameters.ContainsKey("hash-algorithm") ? request.parameters["hash-algorithm"] : null,
-                };
-
+                string json = JsonConvert.SerializeObject(request.parameters, Formatting.Indented);
+                var printRequest = JsonConvert.DeserializeObject<PrintRequestDto>(json);
                 printerName=new PrinterAgentService().Print(printRequest);
             }
             catch (UnathorizedException e)

@@ -74,12 +74,10 @@ namespace PrinterAgent.Service
 
         public SignatureVerificationResponseDto CheckSignature(PrintRequestDto request)
         {
-            var decodedSignature = UrlSafeBase64Converter.ConvertFromBase64Url(request.HashSignature);
-
             var response = pcsClient.CheckSignature(new SignatureVerificationRequestDto()
             {
                 DocumentHash = CreateHash(request.Document, request.HashAlgorithm),
-                HashSignature = Convert.ToBase64String(decodedSignature),
+                HashSignature = Convert.ToBase64String(request.Signature),
                 EncryptionAlgorithm = request.SignatureAlgorithm
             });
             return response;
