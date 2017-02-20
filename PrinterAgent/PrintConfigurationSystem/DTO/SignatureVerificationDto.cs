@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace PrinterAgent.DTO
+namespace PrinterAgent.PrintConfigurationSystem.DTO
 {
     [JsonObject]
     public class SignatureVerificationRequestDto

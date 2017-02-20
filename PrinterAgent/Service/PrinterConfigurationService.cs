@@ -1,111 +1,155 @@
 ﻿using System;
-using System.Configuration;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
+using System.Collections.Generic;
+using System.DirectoryServices.ActiveDirectory;
+using System.Drawing.Printing;
+using System.Security.Cryptography;
+using System.Windows.Forms;
 using PrinterAgent.DTO;
+using PrinterAgent.PrintConfigurationSystem;
+using PrinterAgent.PrintConfigurationSystem.DTO;
 using PrinterAgent.Util;
 
 namespace PrinterAgent.Service
 {
     public class PrinterConfigurationService
     {
-        private static readonly string HostUrl = ConfigurationManager.AppSettings["PrinterConfigurationBaseUrl"];
+        private PrinterConfigurationClient pcsClient = new PrinterConfigurationClient();
+        
 
-        private static readonly bool LogPrintConfRequests = bool.Parse(ConfigurationManager.AppSettings["LogPrintConfRequests"]);
-        private HttpClient CreateClient()
+        public int? GetNetworkingPort()
         {
-            HttpClient client = null;
-
-            if (LogPrintConfRequests)
-                client = new HttpClient(new HttpClientLoggingHandler(new HttpClientHandler()));
-            else
-                client = new HttpClient();
-
-            client.BaseAddress = new Uri(HostUrl);
-            
-            client.DefaultRequestHeaders.Accept.Clear();
-            
-            
-            return client;
+            return GetConfiguration()?.AgentListeningPort;
         }
 
-        public PrintConfigurationDto CreateConfiguration(PrintConfigurationDto conf)
+        public PrintConfigurationResponseDto GetConfiguration()
         {
-            using (var client = CreateClient())
+            try
             {
-                var response = client.PutAsJsonAsync("api/computers/agent", conf).Result;
+                var secret = GetPrinterAgentId();
+                if (!string.IsNullOrEmpty(secret))
+                    return pcsClient.GetConfiguration(secret);
+            }
+            catch (Exception e)
+            {
+                Logger.LogErrorToPrintConf(e.ToString());
+            }
+            return null;
 
-                if (response.IsSuccessStatusCode)
-                {
-                    return response.Content.ReadAsAsync<PrintConfigurationDto>().Result;
-                }
-                Logger.LogError("CreateConfiguration got unsuccessful response: " + response);
+        }
+
+        private string GetPrinterAgentId()
+        {
+            var localSecret = SecretResolver.GetPrinterAgentId();
+
+            if (string.IsNullOrEmpty(localSecret))
+            {
+                localSecret = RegisterComputer();
+            }
+
+            if (string.IsNullOrEmpty(localSecret))
+            {
+                Logger.LogError("Secret was not found. Registration failed.");
+                throw new Exception("Secret was not found. Registration failed.");
+            }
+            return localSecret;
+        }
+
+        private string RegisterComputer()
+        {
+            Logger.LogInfo("Agent id does not exist in registry. Registering the computer on a backend service.");
+            try
+            {
+                var id = CreateConfiguration()?.Secret;
+                RegistryDataResolver.StorePrinterAgentId(id);
+                return id;
+            }
+            catch (Exception e)
+            {
                 return null;
             }
+
+        }
+        
+        
+
+        public SignatureVerificationResponseDto CheckSignature(PrintRequestDto request)
+        {
+            var decodedSignature = UrlSafeBase64Converter.ConvertFromBase64Url(request.HashSignature);
+
+            var response = pcsClient.CheckSignature(new SignatureVerificationRequestDto()
+            {
+                DocumentHash = CreateHash(request.Document, request.HashAlgorithm),
+                HashSignature = Convert.ToBase64String(decodedSignature),
+                EncryptionAlgorithm = request.SignatureAlgorithm
+            });
+            return response;
+
         }
 
-        public PrintConfigurationDto UpdateConfiguration(string printerAgentId, PrintConfigurationDto conf)
-        {
-            using (var client = CreateClient())
-            {
-                var response =
-                    client.PostAsJsonAsync<PrintConfigurationDto>("api/computers/agent/" + printerAgentId, conf).Result;
 
-                if (response.IsSuccessStatusCode)
-                {
-                    return response.Content.ReadAsAsync<PrintConfigurationDto>().Result;
-                }
-                Logger.LogErrorToPrintConf("UpdateConfiguration got unsuccessful response: " + response);
-                return null;
+        private string CreateHash(byte[] requestDocument, string requestHashAlgorithm)
+        {
+            using (var hashAlgorithm = HashAlgorithm.Create(requestHashAlgorithm))
+            {
+                if (hashAlgorithm == null)
+                    throw new Exception(requestHashAlgorithm + " is not recognized as a valid hash algorithm");
+                var hash = hashAlgorithm.ComputeHash(requestDocument);
+                return Convert.ToBase64String(hash);
+
             }
         }
 
-        public PrintConfigurationDto GetConfiguration(string printerAgentId)
+        public PrintConfigurationResponseDto CreateConfiguration()
         {
-            using (var client = CreateClient())
+            var request = CreateConfigurationRequest();
+            var response = pcsClient.CreateConfiguration(request);
+            if (response != null)
             {
-                var response = client.GetAsync("api/computers/agent/" + printerAgentId).Result;
-
-                if (response.IsSuccessStatusCode)
-                {
-                    return response.Content.ReadAsAsync<PrintConfigurationDto>().Result;
-                }
-
-                Logger.LogErrorToPrintConf("GetConfiguration got unsuccessful response: " + response);
-                return null;
+                CachedPrintConfiguration.LastSentPrinters = request.Printers;
             }
+            return response;
+
         }
 
-        public SignatureVerificationResponseDto CheckSignature(SignatureVerificationRequestDto request)
+        private PrintConfigurationRequestDto CreateConfigurationRequest()
         {
-            using (var client = CreateClient())
-            {
-                var response = client.PostAsJsonAsync("api/signature/verify", request).Result;
+            var request = new PrintConfigurationRequestDto();
+            request.Name = GetCurrentComputerName();
+            request.AgentVersion = Application.ProductVersion;
+            request.Printers = PrinterManager.GetAvailablePrinters();
+            return request;
 
-                if (response.IsSuccessStatusCode)
-                {
-                    return response.Content.ReadAsAsync<SignatureVerificationResponseDto>().Result;
-                }
-                Logger.LogErrorToPrintConf("CheckSignature got unsuccessful response: " + response);
-                return null;
-            }
         }
 
-        public void SendLog(string printerAgentId, string log)
+        private string GetCurrentComputerName()
         {
-            using (var client = CreateClient())
+            string computerName = "";
+            try
             {
-                var requestUrl = string.Format("api/computers/agent/{0}/logs", printerAgentId);
-                
-                var response = client.PutAsync(requestUrl, new StringContent(log, Encoding.UTF8)).Result;
-
-                if (response.IsSuccessStatusCode)
-                {
-                    return;
-                }
-                Logger.LogError("SendLog got unsuccessful response: " + response);
+                computerName += Domain.GetComputerDomain() + "\\";
             }
+            catch (Exception e) { }
+            computerName += Environment.MachineName;
+            return computerName;
+        }
+
+
+        public void UpdateConfiguration()
+        {
+            var secret = GetPrinterAgentId();
+            var request = CreateConfigurationRequest();
+            var response = pcsClient.UpdateConfiguration(secret, request);
+            if (response != null)
+            {
+                CachedPrintConfiguration.LastSentPrinters = request.Printers;
+            }
+
+        }
+
+        public void SendLog(string log)
+        {
+            var secret = GetPrinterAgentId();
+            pcsClient.SendLog(secret, log);
         }
     }
 }

@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Configuration;
 using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Printing;
 using System.IO;
-using System.Printing;
-using System.Security.Cryptography;
 using System.Threading;
-using System.Windows.Forms;
 using PrinterAgent.DTO;
 using PrinterAgent.Util;
 using WPFtoolkitFramework.Funciones_y_metodos;
@@ -21,6 +16,8 @@ namespace PrinterAgent.Service
         private static readonly string UseDebugPrinter = ConfigurationManager.AppSettings["UseDebugPrinter"];
         private static readonly string TempFilePrefix = ConfigurationManager.AppSettings["TempFilePrefix"];
         private static readonly int AdobeHangSeconds = int.Parse(ConfigurationManager.AppSettings["AdobeHangSeconds"]);
+
+        private readonly PrinterConfigurationService printConfService = new PrinterConfigurationService();
 
         public string Print(PrintRequestDto request)
         {
@@ -125,49 +122,28 @@ namespace PrinterAgent.Service
             if (!string.IsNullOrEmpty(UseDebugPrinter))
                 return UseDebugPrinter;
 
-            var conf = PrintConfiguration.Instance;
-            var printer = conf.Printers?.Find(x => x.DocumentTypes!=null && x.DocumentTypes.Contains(documentType));
+            var conf = printConfService.GetConfiguration();
+            var printer = (conf?.DocTypeMappings!=null && conf.DocTypeMappings.ContainsKey(documentType)) ? conf.DocTypeMappings[documentType] : null;
 
-            if (printer != null)
-                return printer.Name;
+            if (!string.IsNullOrEmpty(printer))
+                return printer;
 
-            var defaultPrinter = conf.Printers?.Find(x => x.IsDefault!=null && x.IsDefault.Value);
-            if (defaultPrinter != null)
-                return defaultPrinter.Name;
+            var defaultPrinter = PrinterManager.GetDefaultPrinter();
+            if (!string.IsNullOrEmpty(defaultPrinter))
+                return defaultPrinter;
 
             throw new ForbiddenException("Neither printer for the given document type nor default printer were found");
             
         }
-
+        
         private void VerifySignature(PrintRequestDto request)
         {
-           var decodedSignature =UrlSafeBase64Converter.ConvertFromBase64Url(request.HashSignature);
-
-           var response = new PrinterConfigurationService().CheckSignature(new SignatureVerificationRequestDto()
-            {
-                DocumentHash = CreateHash(request.Document, request.HashAlgorithm),
-                HashSignature = Convert.ToBase64String(decodedSignature),
-                EncryptionAlgorithm = request.SignatureAlgorithm
-            });
-
-            if (response?.Verified == true)
+           if(printConfService.CheckSignature(request)?.Verified == true)
                 return;
             
             throw new UnathorizedException("Signature verification failed");
         }
-
-        private string CreateHash(byte[] requestDocument, string requestHashAlgorithm)
-        {
-            using (var hashAlgorithm = HashAlgorithm.Create(requestHashAlgorithm))
-            {
-                if (hashAlgorithm == null)
-                    throw new Exception(requestHashAlgorithm + " is not recognized as a valid hash algorithm");
-                var hash = hashAlgorithm.ComputeHash(requestDocument);
-                return Convert.ToBase64String(hash);
-
-            }
-        }
-
+        
 
         public string Ping(PingRequestDto pingRequest)
         {

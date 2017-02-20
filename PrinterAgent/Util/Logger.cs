@@ -7,13 +7,12 @@ namespace PrinterAgent.Util
     public class Logger
     {
         private static PrinterConfigurationService confService = new PrinterConfigurationService();
-
+        
         public static void LogErrorToPrintConf(string message)
         {
-            var id = PrintConfiguration.Instance?.Secret ?? RegistryDataResolver.GetStoredPrinterAgentId();
             try
             {
-                confService.SendLog(id, ComposeMessage("ERROR", message));
+                confService.SendLog(ComposeMessage("ERROR", message));
             }
             catch { }
             LogError(message);

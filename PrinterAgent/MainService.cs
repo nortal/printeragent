@@ -51,7 +51,7 @@ namespace PrinterAgent
     public class MainService
     {
         
-        private ConfigurationPoller confPoller;
+        private ConfigurationUpdater confUpdater;
         private SocketServer.SocketServer server;
 
         private bool isLoggedIn;
@@ -61,17 +61,19 @@ namespace PrinterAgent
         {
             isLoggedIn = true;
             Logger.LogInfo("Main service started");
-            Status = "Getting networking port...";
-            confPoller = new ConfigurationPoller();
-            new Thread(() => confPoller.Poll()).Start();
-            //wait until configuration is polled
-            Thread.Sleep(3000);
 
-            var port = PrintConfiguration.Instance?.AgentListeningPort;
+            Status = "Starting configuration updater...";
+            confUpdater = new ConfigurationUpdater();
+            new Thread(() => confUpdater.Poll()).Start();
+
+            Status = "Getting networking port...";
+            PrinterConfigurationService pcsService = new PrinterConfigurationService();
+            
+            var port = pcsService.GetNetworkingPort();
             while (port == null && isLoggedIn)
             {
                 Thread.Sleep(30000);
-                port = PrintConfiguration.Instance?.AgentListeningPort;
+                port = pcsService.GetNetworkingPort();
             }
 
             if (!isLoggedIn)
@@ -87,7 +89,7 @@ namespace PrinterAgent
         public void Stop()
         {
             isLoggedIn = false;
-            confPoller?.Stop();
+            confUpdater?.Stop();
             server?.Stop();
             Logger.LogInfo("Main service stopped");
         }

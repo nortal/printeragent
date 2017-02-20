@@ -30,6 +30,7 @@
     <Feature Id="ProductFeature" Title="Printer Agent" Level="1">
       <ComponentGroupRef Id="ProductComponents" />
       <ComponentRef Id="RegistryEntries" />
+      <ComponentGroupRef Id="ProductMenuComponents" />
     </Feature>
     
   </Product>
@@ -41,6 +42,11 @@
       <Directory Id="ProgramFilesFolder">
         <Directory Id="INSTALLFOLDER" Name="Printer Agent" />
       </Directory>
+      
+      <Directory Id="ProgramMenuFolder">
+          <Directory Id="ApplicationProgramsFolder" Name="PrinterAgent"/>
+      </Directory>
+  
     </Directory>
   </Fragment>
 
@@ -86,4 +92,23 @@
 			</Component>
 		</ComponentGroup>
 	</Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="ProductMenuComponents" Directory="ApplicationProgramsFolder">
+        <Component Id="ApplicationShortcut" Guid="{AE75A17D-3EBF-4B68-AA32-73D18D983317}" >
+            <Shortcut
+                Id="ApplicationStartMenuShortcut"
+                Name="PrinterAgent"
+                Description="PrinterAgent"
+                Target="[#PrinterAgent.exe]"
+                WorkingDirectory="APPLICATIONROOTDIRECTORY"/>
+            <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
+            <RegistryValue
+                Root="HKCU"
+                Key="Software\Nortal\PrinterAgent"
+                Name="installed" Type="integer" Value="1"
+                KeyPath="yes"  />
+        </Component>
+    </ComponentGroup>
+  </Fragment>
 </Wix>
