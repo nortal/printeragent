@@ -65,6 +65,7 @@ namespace PrinterAgent.Service
             }
             catch (Exception e)
             {
+                Logger.LogError(e.ToString());
                 return null;
             }
 

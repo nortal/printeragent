@@ -83,7 +83,7 @@ namespace PrinterAgent
             new Thread(server.Start).Start();
 
             Status = "Local server started";
-
+            
         }
         
         public void Stop()

@@ -39,17 +39,24 @@ namespace PrinterAgent.Util
 
         public static string GetStoredPrinterAgentId()
         {
-            using (var subKey = Registry.LocalMachine.OpenSubKey(PrinterAgentIdPath))
+            try
             {
-                if (subKey == null)
-                    return null;
-                var storedId = (byte[])subKey.GetValue(PrinterAgentIdKey);
-                if (storedId == null)
-                    return null;
-                var decryptedId = Encoding.UTF8.GetString(DataProtector.Unprotect(storedId));
-                return decryptedId;
+                using (var subKey = Registry.LocalMachine.OpenSubKey(PrinterAgentIdPath))
+                {
+                    if (subKey == null)
+                        return null;
+                    var storedId = (byte[]) subKey.GetValue(PrinterAgentIdKey);
+                    if (storedId == null)
+                        return null;
+                    var decryptedId = Encoding.UTF8.GetString(DataProtector.Unprotect(storedId));
+                    return decryptedId;
+                }
             }
-            
+            catch (Exception e)
+            {
+                Logger.LogError(e.ToString());
+                return null;
+            }
         }
 
         public static void StorePrinterAgentId(string id)
