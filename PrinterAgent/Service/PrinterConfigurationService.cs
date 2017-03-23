@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.DirectoryServices.ActiveDirectory;
 using System.Drawing.Printing;
 using System.Security.Cryptography;
+using System.Threading;
 using System.Windows.Forms;
 using PrinterAgent.DTO;
 using PrinterAgent.PrintConfigurationSystem;
@@ -14,7 +15,8 @@ namespace PrinterAgent.Service
     public class PrinterConfigurationService
     {
         private PrinterConfigurationClient pcsClient = new PrinterConfigurationClient();
-        
+
+        static readonly object _lock = new object();
 
         public int? GetNetworkingPort()
         {
@@ -39,19 +41,23 @@ namespace PrinterAgent.Service
 
         private string GetPrinterAgentId()
         {
-            var localSecret = SecretResolver.GetPrinterAgentId();
-
-            if (string.IsNullOrEmpty(localSecret))
+            lock (_lock)
             {
-                localSecret = RegisterComputer();
+                var localSecret = SecretResolver.GetPrinterAgentId();
+
+                if (string.IsNullOrEmpty(localSecret))
+                {
+                    localSecret = RegisterComputer();
+                }
+
+                if (string.IsNullOrEmpty(localSecret))
+                {
+                    Logger.LogError("Secret was not found. Registration failed.");
+                    throw new Exception("Secret was not found. Registration failed.");
+                }
+                return localSecret;
             }
 
-            if (string.IsNullOrEmpty(localSecret))
-            {
-                Logger.LogError("Secret was not found. Registration failed.");
-                throw new Exception("Secret was not found. Registration failed.");
-            }
-            return localSecret;
         }
 
         private string RegisterComputer()
@@ -147,8 +153,20 @@ namespace PrinterAgent.Service
 
         public void SendLog(string log)
         {
-            var secret = GetPrinterAgentId();
-            pcsClient.SendLog(secret, log);
+            if (Monitor.TryEnter(_lock, 1500))
+            {
+                try
+                {
+                    var secret = GetPrinterAgentId();
+                    pcsClient.SendLog(secret, log);
+                }
+                finally
+                {
+                    Monitor.Exit(_lock);
+                }
+            }
+
+            
         }
     }
 }
