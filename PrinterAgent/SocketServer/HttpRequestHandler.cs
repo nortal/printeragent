@@ -28,7 +28,8 @@ namespace PrinterAgent.SocketServer
                     return Print();
                 case "GET /api/print-jobs/ping.png":
                     return Ping();
-
+                case "GET /api/print-jobs/check-doctype.png":
+                    return CheckDocumentType();
             }
             return new TcpMessageHttpResponse() { status = "404 Not Found" };
         }
@@ -42,6 +43,23 @@ namespace PrinterAgent.SocketServer
                 var pingRequest = JsonConvert.DeserializeObject<PingRequestDto>(json);
 
                 new PrinterAgentService().Ping(pingRequest);
+            }
+            catch (Exception e)
+            {
+                Logger.LogErrorToPrintConf(e.ToString());
+                return ForbiddenResponse(e);
+            }
+            return PingImageResponse();
+        }
+
+        private TcpMessageHttpResponse CheckDocumentType()
+        {
+            try
+            {
+                string json = JsonConvert.SerializeObject(request.parameters, Formatting.Indented);
+                var pingRequest = JsonConvert.DeserializeObject<CheckDocumentTypeDto>(json);
+
+                new PrinterAgentService().CheckDocumentType(pingRequest);
             }
             catch (Exception e)
             {

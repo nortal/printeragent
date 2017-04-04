@@ -109,11 +109,10 @@ namespace PrinterAgent.Service
         }
         private string GetPrinterName(string documentType)
         {
-            var conf = printConfService.GetConfiguration();
-            var printer = (conf?.DocTypeMappings!=null && conf.DocTypeMappings.ContainsKey(documentType)) ? conf.DocTypeMappings[documentType] : null;
+            var printerByDocType = GetPrinterNameByDocType(documentType);
 
-            if (!string.IsNullOrEmpty(printer))
-                return printer;
+            if (!string.IsNullOrEmpty(printerByDocType))
+                return printerByDocType;
 
             var defaultPrinter = PrinterManager.GetDefaultPrinter();
             if (!string.IsNullOrEmpty(defaultPrinter))
@@ -122,7 +121,14 @@ namespace PrinterAgent.Service
             throw new ForbiddenException("Neither printer for the given document type nor default printer were found");
             
         }
-        
+
+        private string GetPrinterNameByDocType(string documentType)
+        {
+            var conf = printConfService.GetConfiguration();
+            var printer = (conf?.DocTypeMappings != null && conf.DocTypeMappings.ContainsKey(documentType)) ? conf.DocTypeMappings[documentType] : null;
+            return printer;
+        }
+
         private void VerifySignature(PrintRequestDto request)
         {
            if(printConfService.CheckSignature(request)?.Verified == true)
@@ -135,6 +141,14 @@ namespace PrinterAgent.Service
         public string Ping(PingRequestDto pingRequest)
         {
             return GetPrinterName(pingRequest.DocumentType);
+        }
+
+        public void CheckDocumentType(CheckDocumentTypeDto pingRequest)
+        {
+            var printerByDocType = GetPrinterNameByDocType(pingRequest.DocumentType);
+
+            if (!string.IsNullOrEmpty(printerByDocType))
+                throw new ForbiddenException("There is no printer set for the current document type");
         }
     }
     

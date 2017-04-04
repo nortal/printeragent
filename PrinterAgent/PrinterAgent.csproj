@@ -108,6 +108,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DTO\CheckDocumentTypeDto.cs" />
     <Compile Include="DTO\PingRequestDto.cs" />
     <Compile Include="PrintConfigurationSystem\DTO\PrintConfigurationDto.cs" />
     <Compile Include="DTO\PrintRequestDto.cs" />
