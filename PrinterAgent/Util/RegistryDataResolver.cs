@@ -8,8 +8,36 @@ namespace PrinterAgent.Util
     {
         private const string PrinterAgentIdPath = @"SOFTWARE\Nortal Print Agent";
         private const string PrinterAgentIdKey = @"PrinterAgentId";
+        private const string PcsUrlKey = @"PcsUrl";
 
-        public static string GetAcrobatPath()
+
+        public static string GetPcsUrl()
+        {
+            try
+            {
+                using (var subKey = Registry.LocalMachine.OpenSubKey(PrinterAgentIdPath))
+                {
+                    if (subKey == null)
+                        return null;
+                    var url = (string) subKey.GetValue(PcsUrlKey);
+
+                    var dummyChar = url[0];
+                    //should end with '/'
+                    if (url[url.Length - 1] != '/')
+                        url += '/';
+                    return url;
+                }
+
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(e.ToString());
+                throw new Exception("Unable to get Pcs Url from registry");
+            }
+        }
+
+        public static
+            string GetAcrobatPath()
         {
             string adobePath1 = null;
             try

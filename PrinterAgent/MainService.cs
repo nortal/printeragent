@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Win32;
@@ -13,6 +14,7 @@ namespace PrinterAgent
 
         public static void Start()
         {
+            ConfigurationManager.AppSettings["PrinterConfigurationBaseUrl"]=RegistryDataResolver.GetPcsUrl();
             SetupSessionSwitchEventHandler();
             MainService = new MainService();
             MainService.Start();
