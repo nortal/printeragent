@@ -104,8 +104,15 @@ namespace PrinterAgent.Service
 
         private void RemoveFile(string fileName)
         {
-            if (File.Exists(fileName))
-                File.Delete(fileName);
+            try
+            {
+                if (File.Exists(fileName))
+                    File.Delete(fileName);
+            }
+            catch
+            {
+                
+            }
         }
         private string GetPrinterName(string documentType)
         {
@@ -147,7 +154,7 @@ namespace PrinterAgent.Service
         {
             var printerByDocType = GetPrinterNameByDocType(pingRequest.DocumentType);
 
-            if (!string.IsNullOrEmpty(printerByDocType))
+            if (string.IsNullOrEmpty(printerByDocType))
                 throw new ForbiddenException("There is no printer set for the current document type");
         }
     }
