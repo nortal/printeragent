@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"><?define PrinterAgent_TargetDir=$(var.PrinterAgent.TargetDir)?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <?define PrinterAgent_TargetDir=$(var.PrinterAgent.TargetDir)?>
   <Product Id="*" Name="Printer Agent" Language="1033" Version="!(bind.FileVersion.PrinterAgent.exe)" Manufacturer="Nortal" UpgradeCode="87b44ae3-51c9-4ed3-85b6-af14c22aa416">
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Description="Version:!(bind.FileVersion.PrinterAgent.exe)" />
     <UI>
@@ -86,13 +87,18 @@
   <Fragment>
     <DirectoryRef Id="TARGETDIR">
       <Component Id="RegistryEntries" Guid="dfff78dc-f2db-40a5-b82e-e9c8eec177ec">
-        <RegistryKey Root="HKLM" Key="Software\Nortal Print Agent" ForceCreateOnInstall="yes" >
-          <RegistryValue Name="PcsUrl" Type="string" Value="[PCS_URL]" />
+        <RegistryKey Root="HKLM" Key="Software\Nortal Print Agent" ForceCreateOnInstall="yes" Action="create">
           <Permission User="Users" GenericAll="yes" />
+          <RegistryValue Name="PcsUrl" Type="string" Value="[PCS_URL]">
+            <Permission User="Users" GenericAll="yes" />
+          
+          </RegistryValue>
         </RegistryKey>
+        
         <RegistryKey Root="HKLM" Key="Software\Microsoft\Windows\CurrentVersion\Run">
           <RegistryValue Name="PrintAgent" Type="string" Value="[#PrinterAgent.exe]" />
         </RegistryKey>
+        
       </Component>
     </DirectoryRef>
   </Fragment>

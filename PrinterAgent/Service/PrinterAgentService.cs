@@ -131,6 +131,8 @@ namespace PrinterAgent.Service
 
         private string GetPrinterNameByDocType(string documentType)
         {
+            if (documentType == null)
+                return null;
             var conf = printConfService.GetConfiguration();
             var printer = (conf?.DocTypeMappings != null && conf.DocTypeMappings.ContainsKey(documentType)) ? conf.DocTypeMappings[documentType] : null;
             return printer;

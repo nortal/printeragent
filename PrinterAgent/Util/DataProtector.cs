@@ -7,28 +7,14 @@ namespace PrinterAgent.Util
         static byte[] s_aditionalEntropy = { 9, 8, 1, 7, 5 };
         public static byte[] Protect(byte[] data)
         {
-            try
-            {
-                return ProtectedData.Protect(data, s_aditionalEntropy, DataProtectionScope.LocalMachine);
-            }
-            catch (CryptographicException e)
-            {
-                Logger.LogErrorToPrintConf(e.ToString());
-                return null;
-            }
+            return ProtectedData.Protect(data, s_aditionalEntropy, DataProtectionScope.LocalMachine);
         }
 
         public static byte[] Unprotect(byte[] data)
         {
-            try
-            {
-                return ProtectedData.Unprotect(data, s_aditionalEntropy, DataProtectionScope.LocalMachine);
-            }
-            catch (CryptographicException e)
-            {
-                Logger.LogErrorToPrintConf(e.ToString());
-                return null;
-            }
+            
+            return ProtectedData.Unprotect(data, s_aditionalEntropy, DataProtectionScope.LocalMachine);
+            
         }
         
     }

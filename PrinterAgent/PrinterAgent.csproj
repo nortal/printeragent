@@ -131,7 +131,7 @@
     <Compile Include="SocketServer\SocketServer.cs" />
     <Compile Include="SocketServer\TcpRequestHandler.cs" />
     <Compile Include="Util\DataProtector.cs" />
-    <Compile Include="Util\HttpClientLoggingHandler.cs" />
+    <Compile Include="PrintConfigurationSystem\HttpRequestHandler.cs" />
     <Compile Include="Util\ImageDrawer.cs" />
     <Compile Include="Util\Logger.cs" />
     <Compile Include="Util\PrintAgentException.cs" />

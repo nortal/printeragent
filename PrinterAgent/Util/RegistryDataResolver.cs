@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Permissions;
 using System.Text;
 using Microsoft.Win32;
 
@@ -13,31 +14,19 @@ namespace PrinterAgent.Util
 
         public static string GetPcsUrl()
         {
-            try
+            using (var subKey = Registry.LocalMachine.OpenSubKey(PrinterAgentIdPath))
             {
-                using (var subKey = Registry.LocalMachine.OpenSubKey(PrinterAgentIdPath))
-                {
-                    if (subKey == null)
-                        return null;
-                    var url = (string) subKey.GetValue(PcsUrlKey);
-
-                    var dummyChar = url[0];
-                    //should end with '/'
-                    if (url[url.Length - 1] != '/')
-                        url += '/';
-                    return url;
-                }
-
+                var url = (string) subKey.GetValue(PcsUrlKey);
+                
+                //should end with '/'
+                if (url[url.Length - 1] != '/')
+                    url += '/';
+                return url;
             }
-            catch (Exception e)
-            {
-                Logger.LogError(e.ToString());
-                throw new Exception("Unable to get Pcs Url from registry");
-            }
+                
         }
 
-        public static
-            string GetAcrobatPath()
+        public static string GetAcrobatPath()
         {
             string adobePath1 = null;
             try
@@ -67,23 +56,15 @@ namespace PrinterAgent.Util
 
         public static string GetStoredPrinterAgentId()
         {
-            try
+            
+            using (var subKey = Registry.LocalMachine.OpenSubKey(PrinterAgentIdPath))
             {
-                using (var subKey = Registry.LocalMachine.OpenSubKey(PrinterAgentIdPath))
-                {
-                    if (subKey == null)
-                        return null;
-                    var storedId = (byte[]) subKey.GetValue(PrinterAgentIdKey);
-                    if (storedId == null)
-                        return null;
-                    var decryptedId = Encoding.UTF8.GetString(DataProtector.Unprotect(storedId));
-                    return decryptedId;
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.LogError(e.ToString());
-                return null;
+                    
+                var storedId = (byte[]) subKey.GetValue(PrinterAgentIdKey);
+                if (storedId == null)
+                    return null;
+                var decryptedId = Encoding.UTF8.GetString(DataProtector.Unprotect(storedId));
+                return decryptedId;
             }
         }
 
@@ -95,6 +76,14 @@ namespace PrinterAgent.Util
                 subKey.SetValue(PrinterAgentIdKey, encryptedId);
             }
         }
-        
+
+        public static void CheckWriteAccess()
+        {
+            using (Registry.LocalMachine.OpenSubKey(PrinterAgentIdPath, true))
+            {
+                
+            }
+
+        }
     }
 }

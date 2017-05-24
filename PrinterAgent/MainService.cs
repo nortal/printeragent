@@ -14,7 +14,8 @@ namespace PrinterAgent
 
         public static void Start()
         {
-            ConfigurationManager.AppSettings["PrinterConfigurationBaseUrl"]=RegistryDataResolver.GetPcsUrl();
+            
+            ConfigurationManager.AppSettings["PrinterConfigurationBaseUrl"] = RegistryDataResolver.GetPcsUrl();
             SetupSessionSwitchEventHandler();
             MainService = new MainService();
             MainService.Start();
@@ -66,7 +67,10 @@ namespace PrinterAgent
 
             Status = "Starting configuration updater...";
             confUpdater = new ConfigurationUpdater();
-            new Thread(() => confUpdater.Poll()).Start();
+
+            var confPollerTask = new Task(() => confUpdater.Poll());
+            confPollerTask.ContinueWith(ExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            confPollerTask.Start();
 
             Status = "Getting networking port...";
             PrinterConfigurationService pcsService = new PrinterConfigurationService();
@@ -82,9 +86,11 @@ namespace PrinterAgent
                 return;
             
             server = new SocketServer.SocketServer(port.Value);
-            new Thread(server.Start).Start();
+            var serverTask = new Task(() => server.Start());
+            serverTask.ContinueWith(ExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+            serverTask.Start();
 
-            Status = "Local server started";
+            Status = "Local server is running on port "+ port;
             
         }
         
@@ -96,6 +102,12 @@ namespace PrinterAgent
             Logger.LogInfo("Main service stopped");
         }
 
+
+        static void ExceptionHandler(Task task)
+        {
+            var exception = task.Exception;
+            Logger.LogErrorToPrintConf(exception?.ToString());
+        }
     }
 
 

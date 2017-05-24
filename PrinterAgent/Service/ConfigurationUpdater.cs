@@ -19,19 +19,10 @@ namespace PrinterAgent.Service
             isRunning = true;
             while (isRunning)
             {
-                try
-                {
-                    Logger.LogInfo("Configuration sync");
-                    UpdateBackendConfIfRequired();
-                    
-                }
-                catch (Exception e)
-                {
-                    Logger.LogErrorToPrintConf("Configuration poller received exception "+e);
-                }
-
-                Thread.Sleep(PollingInterval*60*1000);
                 
+                UpdateBackendConfIfRequired();
+                Thread.Sleep(PollingInterval*60*1000);
+              
             }
             
 

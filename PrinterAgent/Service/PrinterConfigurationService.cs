@@ -16,7 +16,9 @@ namespace PrinterAgent.Service
     {
         private PrinterConfigurationClient pcsClient = new PrinterConfigurationClient();
 
-        static readonly object _lock = new object();
+        static readonly object _getPrinterAgentIdlock = new object();
+
+        static readonly object _sendLogLock = new object();
 
         public int? GetNetworkingPort()
         {
@@ -25,23 +27,17 @@ namespace PrinterAgent.Service
 
         public PrintConfigurationResponseDto GetConfiguration()
         {
-            try
-            {
-                var secret = GetPrinterAgentId();
-                if (!string.IsNullOrEmpty(secret))
-                    return pcsClient.GetConfiguration(secret);
-            }
-            catch (Exception e)
-            {
-                Logger.LogErrorToPrintConf(e.ToString());
-            }
+            var secret = GetPrinterAgentId();
+            if (!string.IsNullOrEmpty(secret))
+                return pcsClient.GetConfiguration(secret);
+
             return null;
 
         }
 
         private string GetPrinterAgentId()
         {
-            lock (_lock)
+            lock (_getPrinterAgentIdlock)
             {
                 var localSecret = SecretResolver.GetPrinterAgentId();
 
@@ -52,8 +48,7 @@ namespace PrinterAgent.Service
 
                 if (string.IsNullOrEmpty(localSecret))
                 {
-                    Logger.LogError("Secret was not found. Registration failed.");
-                    throw new Exception("Secret was not found. Registration failed.");
+                    Logger.LogError("Secret was not found. Registration of computer failed.");
                 }
                 return localSecret;
             }
@@ -62,20 +57,17 @@ namespace PrinterAgent.Service
 
         private string RegisterComputer()
         {
-            Logger.LogInfo("Agent id does not exist in registry. Registering the computer on a backend service.");
-            try
-            {
-                var id = CreateConfiguration()?.Secret;
-                RegistryDataResolver.StorePrinterAgentId(id);
-                return id;
-            }
-            catch (Exception e)
-            {
-                Logger.LogError(e.ToString());
-                return null;
-            }
+            Logger.LogInfo("Agent id does not exist in registry. Registering computer on PCS.");
 
-        }
+            RegistryDataResolver.CheckWriteAccess();
+
+            var secret = CreateConfiguration()?.Secret;
+            if (secret == null)
+                return null;
+
+            RegistryDataResolver.StorePrinterAgentId(secret);
+            return secret;
+       }
         
         
 
@@ -107,13 +99,14 @@ namespace PrinterAgent.Service
         public PrintConfigurationResponseDto CreateConfiguration()
         {
             var request = CreateConfigurationRequest();
+            
             var response = pcsClient.CreateConfiguration(request);
             if (response != null)
             {
                 CachedPrintConfiguration.LastSentPrinters = request.Printers;
             }
             return response;
-
+            
         }
 
         private PrintConfigurationRequestDto CreateConfigurationRequest()
@@ -143,26 +136,29 @@ namespace PrinterAgent.Service
         {
             var secret = GetPrinterAgentId();
             var request = CreateConfigurationRequest();
+            
             var response = pcsClient.UpdateConfiguration(secret, request);
             if (response != null)
             {
                 CachedPrintConfiguration.LastSentPrinters = request.Printers;
             }
-
+            
         }
 
         public void SendLog(string log)
         {
-            if (Monitor.TryEnter(_lock, 1500))
+            // lock monitor to avoid infinite recursive SendLog calls
+            if (Monitor.TryEnter(_sendLogLock, 1500))
             {
                 try
                 {
                     var secret = GetPrinterAgentId();
-                    pcsClient.SendLog(secret, log);
+                    if (!string.IsNullOrEmpty(secret))
+                        pcsClient.SendLog(secret, log);
                 }
                 finally
                 {
-                    Monitor.Exit(_lock);
+                    Monitor.Exit(_sendLogLock);
                 }
             }
 
