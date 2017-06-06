@@ -15,27 +15,9 @@ namespace PrinterAgent.PrintingHandler
     {
 
         private static readonly int AdobeHangSeconds = int.Parse(ConfigurationManager.AppSettings["AdobeHangSeconds"]);
-        private static readonly string TempFilePrefix = ConfigurationManager.AppSettings["TempFilePrefix"];
-
-        public void Print(string printerName, byte[] document)
-        {
-            var tempPath = Path.GetTempPath();
-            var fileName = tempPath + TempFilePrefix + Guid.NewGuid() + ".pdf";
-            File.WriteAllBytes(fileName, document);
-
-            try
-            {
-                PrintWithAdobe(printerName, fileName);
-            }
-            catch (Exception e)
-            {
-                RemoveFile(fileName);
-                throw e;
-            }
-
-        }
-
-        private void PrintWithAdobe(string printerName, string fileName)
+        
+        
+        protected override void Print(string printerName, string fileName)
         {
 
             var adobePath = RegistryDataResolver.GetAcrobatPath();
@@ -66,11 +48,11 @@ namespace PrinterAgent.PrintingHandler
             var proc = new Process();
             proc.StartInfo = infoPrintPdf;
             proc.Start();
-            new Thread(() => WaitAdobe(proc, fileName)).Start();
+            WaitAdobe(proc);
 
         }
 
-        private void WaitAdobe(Process process, string fileName)
+        private void WaitAdobe(Process process)
         {
             try
             {
@@ -83,23 +65,8 @@ namespace PrinterAgent.PrintingHandler
             catch
             {
             }
-            finally
-            {
-                RemoveFile(fileName);
-            }
         }
 
-        private void RemoveFile(string fileName)
-        {
-            try
-            {
-                if (File.Exists(fileName))
-                    File.Delete(fileName);
-            }
-            catch
-            {
-
-            }
-        }
+        
     }
 }

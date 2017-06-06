@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using PrinterAgent.DTO;
+using PrinterAgent.PrintingHandler;
 using PrinterAgent.Util;
 
 
@@ -24,7 +25,7 @@ namespace PrinterAgent.Service
             string printerName = GetPrinterName(request.DocumentType);
             
             Logger.LogInfo("Printing using printer: "+ printerName);
-            Print(printerName, request.Document);
+            new GhostScriptPrintingHandler().Print(printerName, request.Document);
 
             return printerName;
         }
