@@ -16,14 +16,16 @@ namespace PrinterAgent.PrintingHandler
         public void Print(string printerName, byte[] document)
         {
             var filePath = StoreFile(document);
-            try
-            {
-                Print(printerName, filePath);
-            }
-            finally { 
-                RemoveFile(filePath);
-            }
-            
+            //new Thread(() =>{
+                try
+                {
+                    Print(printerName, filePath);
+                }
+                finally
+                {
+                    RemoveFile(filePath);
+                }
+            //}).Start();
         }
 
         protected abstract void Print(string printerName, string filePath);

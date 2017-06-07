@@ -44,19 +44,8 @@
     <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch Printer Agent" />
     <Property Id="WixShellExecTarget" Value="[#PrinterAgent.exe]" />
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
-    <Property Id="ACRO32">
-      <RegistrySearch Id="CheckAcroRd32" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\AcroRd32.exe" Type="raw" />
-    </Property>
-    <Property Id="ACROBAT">
-      <RegistrySearch Id="CheckAcrobat" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\Acrobat.exe" Type="raw" />
-    </Property>
-
     
     <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
-
-    <Condition Message="Adobe Reader must be installed before">
-      Installed OR (ACRO32 OR ACROBAT)
-    </Condition>
     
     <MajorUpgrade Schedule="afterInstallValidate" AllowDowngrades="no" DowngradeErrorMessage="A newer version of [ProductName] is already installed." AllowSameVersionUpgrades="yes" />
     <MediaTemplate EmbedCab="yes" />

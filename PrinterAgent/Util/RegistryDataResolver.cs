@@ -26,34 +26,6 @@ namespace PrinterAgent.Util
                 
         }
 
-        public static string GetAcrobatPath()
-        {
-            string adobePath1 = null;
-            try
-            {
-                adobePath1 = (string)Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\App Paths\AcroRd32.exe").GetValue("");
-            }
-            catch (Exception e)
-            {
-                // ignored
-            }
-
-            if (!string.IsNullOrEmpty(adobePath1))
-                return adobePath1;
-
-            string adobePath2 = null;
-            try
-            {
-                adobePath2 = (string)Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\App Paths\Acrobat.exe").GetValue("");
-            }
-            catch (Exception e)
-            {
-                // ignored
-            }
-            return adobePath2;
-
-        }
-
         public static string GetStoredPrinterAgentId()
         {
             

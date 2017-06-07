@@ -33,6 +33,10 @@ namespace PrinterAgent
             this.notifyIcon1.Text = AppName;
             this.notifyIcon1.ContextMenu = new ContextMenu(new MenuItem[] {new MenuItem("Exit", Program.CloseApp)});
         }
-        
+
+        private void Form1_Load_1(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -47,7 +47,7 @@ namespace PrinterAgent.SocketServer
                             stream.Write(response.body, 0, response.body.Length);
                     }
                 }
-                catch (Exception e)
+                catch
                 {
                     
                 }

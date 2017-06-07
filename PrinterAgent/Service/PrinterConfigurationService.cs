@@ -126,7 +126,7 @@ namespace PrinterAgent.Service
             {
                 computerName += Domain.GetComputerDomain() + "\\";
             }
-            catch (Exception e) { }
+            catch { }
             computerName += Environment.MachineName;
             return computerName;
         }

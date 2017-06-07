@@ -46,7 +46,7 @@ namespace PrinterAgent.SocketServer
                     TcpClient clientSocket = listener.AcceptTcpClient();
                     new Thread(new TcpRequestHandler(clientSocket).HandleClientConnection).Start();
                 }
-                catch (Exception e)
+                catch
                 {
                     
                 }

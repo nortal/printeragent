@@ -19,9 +19,10 @@ namespace PrinterAgent.PrintingHandler
                 switches.Add("-empty");
                 switches.Add("-dPrinted");
                 switches.Add("-dBATCH");
-                switches.Add("-dNOPAUSE");
                 switches.Add("-dSAFER");
                 switches.Add("-dNoCancel");
+                switches.Add("-dNOPAUSE");
+                switches.Add("-dBitsPerPixel=8");
                 switches.Add("-sDEVICE=mswinpr2");
                 switches.Add("-sOutputFile=%printer%" + printerName);
                 switches.Add("-f");
