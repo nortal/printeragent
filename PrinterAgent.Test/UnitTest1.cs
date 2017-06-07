@@ -11,18 +11,19 @@ namespace PrinterAgent.Test
         [TestMethod]
         public void CreateHtml()
         {
-            var bytes = Serialize(@"C:\Users\jevgenisa\Desktop\dontworry1.pdf");
+            
             //var reqContent = Convert.ToBase64String(bytes);
             //var reqContent = Convert.ToBase64String(Serialize(@"C: \Users\jevgenisa\Desktop\Learning Material\Java\Java study material\ch08.pdf"));
-            var htmlFilePath = @"C: \Users\jevgenisa\Desktop\printagentimage.html";
-            var reqContent = Convert.ToBase64String(Serialize(@"C:\Users\jevgenisa\Desktop\MB2-710 Jevgeni Savostkin.pdf"));
+            var htmlFilePath = @"C:\Users\jevgenisa\Desktop\printagentimage.html";
+            var reqContent = Convert.ToBase64String(Serialize(@"C:\Users\jevgenisa\Desktop\07182295.pdf"));
 
-            var content = "<img src=\"http://localhost:8888/api/print-jobs/dummy.gif?document=" + reqContent+ 
-                "&signature=qwerty" +
-                 "&document-type=REFERRAL" +
+            var content = "<img src=\"http://localhost:56789/api/print-jobs/dummy.png?"+
+                "document=" + reqContent+
+                "&signature=c2lnbmF0dXJlDQo=" +
+                 "&document-type=sa" +
                 "&timestamp="+DateTime.Now.Ticks+
                 "&signature-algorithm=alg1"+
-                "&hash-algorithm=SHA-256" +
+                "&hash-algorithm=SHA1" +
                 "\" />";
 
             File.WriteAllText(htmlFilePath, content);

@@ -13,7 +13,7 @@
 
       <Dialog Id="PcsUrlDialog" Width="370" Height="270">
         <Control Id="pcsUrlLabel" Type="Text" X="45" Y="120" Height="17" Width="65" Transparent="yes" Text="Pcs Url:" />
-        <Control Id="pcsUrlTextbox" Type="Edit" X="110" Y="117"  Height="17" Width="200" Property="PCS_URL"  />
+        <Control Id="pcsUrlTextbox" Type="Edit" X="110" Y="117" Height="17" Width="200" Property="PCS_URL" />
 
         
         <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="Specify Parameters" />
@@ -21,7 +21,7 @@
         <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
         <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
 
-        <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.WixUINext)" >
+        <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.WixUINext)">
           <Publish Event="NewDialog" Value="VerifyReadyDlg">2</Publish>
           <Publish Event="SpawnDialog" Value="PcsUrlIdError"><![CDATA[PCS_URL = ""]]></Publish>
         </Control>
@@ -34,13 +34,13 @@
       <Dialog Id="PcsUrlIdError" Width="260" Height="85" NoMinimize="no" Title="[ProductName]">
         <Control Id="PcsUrlIdErrorDesc" Type="Text" Width="194" Height="30" X="48" Y="15" Text="Please enter a Pcs URL." />
         <Control Id="PcsUrlIdErrorOk" Type="PushButton" X="97" Y="57" Width="56" Height="17" Text="Ok">
-          <Publish  Event="EndDialog" Value="Return">1</Publish>
+          <Publish Event="EndDialog" Value="Return">1</Publish>
         </Control>
       </Dialog>
       
     </UI>
 
-    <Property Id="PCS_URL"/>
+    <Property Id="PCS_URL" />
     <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch Printer Agent" />
     <Property Id="WixShellExecTarget" Value="[#PrinterAgent.exe]" />
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
@@ -139,6 +139,9 @@
 			<Component Id="System.Net.Http.WebRequest.dll" Guid="51388083-5cb3-4871-b982-9d9b14967528">
 			  <File Id="System.Net.Http.WebRequest.dll" Name="System.Net.Http.WebRequest.dll" Source="$(var.PrinterAgent_TargetDir)System.Net.Http.WebRequest.dll" />
 			</Component>
+			<Component Id="Ghostscript.NET.dll" Guid="766627b1-c3b5-4679-9410-268578446e89">
+			  <File Id="Ghostscript.NET.dll" Name="Ghostscript.NET.dll" Source="$(var.PrinterAgent_TargetDir)Ghostscript.NET.dll" />
+			</Component>
 		</ComponentGroup>
 	</Fragment>
 
@@ -146,7 +149,7 @@
     <ComponentGroup Id="ProductMenuComponents" Directory="ApplicationProgramsFolder">
         <Component Id="ApplicationShortcut" Guid="{AE75A17D-3EBF-4B68-AA32-73D18D983317}">
           <Shortcut Id="ApplicationStartMenuShortcut" Name="PrinterAgent" Description="PrinterAgent" Target="[#PrinterAgent.exe]" WorkingDirectory="APPLICATIONROOTDIRECTORY">
-            <Icon Id="ShortcutIcon" SourceFile="shortcut_icon.ico"/>  
+            <Icon Id="ShortcutIcon" SourceFile="shortcut_icon.ico" />  
           </Shortcut>
           <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall" />
           <RegistryValue Root="HKCU" Key="Software\Nortal\PrinterAgent" Name="installed" Type="integer" Value="1" KeyPath="yes" />

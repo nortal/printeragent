@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ghostscript.NET.Processor;
 
 namespace PrinterAgent.PrintingHandler
 {
@@ -11,20 +12,22 @@ namespace PrinterAgent.PrintingHandler
     {
         protected override void Print(string printerName, string filePath)
         {
-            filePath = @"C:\Users\jevgenisa\Desktop\eHL\pritneragent\dontworry.pdf";
-
-            printerName = @"\\tarp\3 floor corridor printer";
-
-            var psInfo = new ProcessStartInfo();
-            psInfo.Arguments =
-                $" -dPrinted -dBATCH -dNoCancel -dNOPAUSE -sDEVICE=mswinpr2 -sOutputFile=\"%printer%{printerName}\" \"{filePath}\"";
-            psInfo.FileName = @"C:\Program Files\gs\gs9.10\bin\gswin64c.exe";
-            psInfo.UseShellExecute = false;
-
-            using (var process = Process.Start(psInfo))
+            
+            using (GhostscriptProcessor processor = new GhostscriptProcessor())
             {
-                //TODO: try different ms
-                process.WaitForExit(20000);
+                List<string> switches = new List<string>();
+                switches.Add("-empty");
+                switches.Add("-dPrinted");
+                switches.Add("-dBATCH");
+                switches.Add("-dNOPAUSE");
+                switches.Add("-dSAFER");
+                switches.Add("-dNoCancel");
+                switches.Add("-sDEVICE=mswinpr2");
+                switches.Add("-sOutputFile=%printer%" + printerName);
+                switches.Add("-f");
+                switches.Add(filePath);
+
+                processor.StartProcessing(switches.ToArray(), null);
             }
         }
         
