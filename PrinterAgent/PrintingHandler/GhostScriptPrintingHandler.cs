@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Ghostscript.NET.Processor;
+using PrinterAgent.Util;
 
 namespace PrinterAgent.PrintingHandler
 {
@@ -12,8 +14,11 @@ namespace PrinterAgent.PrintingHandler
     {
         protected override void Print(string printerName, string filePath)
         {
+            var gsHomeDir=Path.GetFullPath(RegistryDataResolver.GetGhostScriptHomePath());
             
-            using (GhostscriptProcessor processor = new GhostscriptProcessor())
+            byte[] buffer = File.ReadAllBytes(gsHomeDir+ "\\bin\\gsdll32.dll");
+
+            using (GhostscriptProcessor processor = new GhostscriptProcessor(buffer))
             {
                 List<string> switches = new List<string>();
                 switches.Add("-empty");

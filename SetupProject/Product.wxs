@@ -12,8 +12,11 @@
       <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="LaunchApplication">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed</Publish>
 
       <Dialog Id="PcsUrlDialog" Width="370" Height="270">
-        <Control Id="pcsUrlLabel" Type="Text" X="45" Y="120" Height="17" Width="65" Transparent="yes" Text="Pcs Url:" />
-        <Control Id="pcsUrlTextbox" Type="Edit" X="110" Y="117" Height="17" Width="200" Property="PCS_URL" />
+        <Control Id="pcsUrlLabel" Type="Text" X="45" Y="100" Height="17" Width="65" Transparent="yes" Text="Pcs Url:" />
+        <Control Id="pcsUrlTextbox" Type="Edit" X="45" Y="110" Height="17" Width="200" Property="PCS_URL" />
+
+		<Control Id="gcPathLabel" Type="Text" X="45" Y="140" Height="17" Width="165" Transparent="yes" Text="GhostScript home directory path:" />
+		<Control Id="gcPathTextbox" Type="Edit" X="45" Y="150" Height="17" Width="200" Property="GS_HOME_PATH" />
 
         
         <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="Specify Parameters" />
@@ -23,7 +26,7 @@
 
         <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.WixUINext)">
           <Publish Event="NewDialog" Value="VerifyReadyDlg">2</Publish>
-          <Publish Event="SpawnDialog" Value="PcsUrlIdError"><![CDATA[PCS_URL = ""]]></Publish>
+          <Publish Event="SpawnDialog" Value="PcsUrlIdError"><![CDATA[PCS_URL = "" OR GS_HOME_PATH = "" ]]></Publish>
         </Control>
         <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)" />
         <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
@@ -32,7 +35,7 @@
       </Dialog>
 
       <Dialog Id="PcsUrlIdError" Width="260" Height="85" NoMinimize="no" Title="[ProductName]">
-        <Control Id="PcsUrlIdErrorDesc" Type="Text" Width="194" Height="30" X="48" Y="15" Text="Please enter a Pcs URL." />
+        <Control Id="PcsUrlIdErrorDesc" Type="Text" Width="194" Height="30" X="48" Y="15" Text="Please enter a Pcs URL and GhostScript home directory." />
         <Control Id="PcsUrlIdErrorOk" Type="PushButton" X="97" Y="57" Width="56" Height="17" Text="Ok">
           <Publish Event="EndDialog" Value="Return">1</Publish>
         </Control>
@@ -41,6 +44,7 @@
     </UI>
 
     <Property Id="PCS_URL" />
+	<Property Id="GS_HOME_PATH" />
     <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch Printer Agent" />
     <Property Id="WixShellExecTarget" Value="[#PrinterAgent.exe]" />
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
@@ -79,9 +83,12 @@
         <RegistryKey Root="HKLM" Key="Software\Nortal Print Agent" ForceCreateOnInstall="yes" Action="create">
           <Permission User="Users" GenericAll="yes" />
           <RegistryValue Name="PcsUrl" Type="string" Value="[PCS_URL]">
-            <Permission User="Users" GenericAll="yes" />
-          
+            <Permission User="Users" GenericAll="yes" />          
           </RegistryValue>
+			
+			<RegistryValue Name="GsHomePath" Type="string" Value="[GS_HOME_PATH]">
+				<Permission User="Users" GenericAll="yes"/>
+			</RegistryValue>
         </RegistryKey>
         
         <RegistryKey Root="HKLM" Key="Software\Microsoft\Windows\CurrentVersion\Run">

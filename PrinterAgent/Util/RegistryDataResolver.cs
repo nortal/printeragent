@@ -10,17 +10,27 @@ namespace PrinterAgent.Util
         private const string PrinterAgentIdPath = @"SOFTWARE\Nortal Print Agent";
         private const string PrinterAgentIdKey = @"PrinterAgentId";
         private const string PcsUrlKey = @"PcsUrl";
+        private const string GsPathKey = @"GsHomePath";
+
 
 
         public static string GetPcsUrl()
         {
+            var url = GetRegistryValue(PcsUrlKey);
+            if (url[url.Length - 1] != '/')
+                url += '/';
+            return url;
+        }
+
+        public static string GetGhostScriptHomePath()
+        {
+            return GetRegistryValue(GsPathKey);
+        }
+        public static string GetRegistryValue(string value)
+        {
             using (var subKey = Registry.LocalMachine.OpenSubKey(PrinterAgentIdPath))
             {
-                var url = (string) subKey.GetValue(PcsUrlKey);
-                
-                //should end with '/'
-                if (url[url.Length - 1] != '/')
-                    url += '/';
+                var url = (string) subKey.GetValue(value);                
                 return url;
             }
                 
