@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -12,6 +13,8 @@ namespace PrinterAgent.PrintingHandler
 {
     public class GhostScriptPrintingHandler : PrintingHandler
     {
+        private static readonly string BitsPerPixel = ConfigurationManager.AppSettings["BitsPerPixel"];
+
         protected override void Print(string printerName, string filePath)
         {
             byte[] buffer = File.ReadAllBytes("gsdll32.dll");
@@ -25,7 +28,9 @@ namespace PrinterAgent.PrintingHandler
                 switches.Add("-dSAFER");
                 switches.Add("-dNoCancel");
                 switches.Add("-dNOPAUSE");
-                switches.Add("-dBitsPerPixel=8");
+                if (!string.IsNullOrEmpty(BitsPerPixel))
+                    switches.Add("-dBitsPerPixel="+ BitsPerPixel);
+
                 switches.Add("-sDEVICE=mswinpr2");
                 switches.Add("-sOutputFile=%printer%" + printerName);
                 switches.Add("-f");
