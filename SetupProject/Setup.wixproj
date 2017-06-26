@@ -25,6 +25,7 @@
     <Compile Include="Product.wxs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="lib\gsdll32.dll" />
     <Content Include="shortcut_icon.ico" />
     <Content Include="Setup.wax" />
   </ItemGroup>
@@ -47,6 +48,9 @@
       <HintPath>$(WixExtDir)\WixUIExtension.dll</HintPath>
       <Name>WixUIExtension</Name>
     </WixExtension>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="lib" />
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" />
   <!--

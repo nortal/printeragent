@@ -14,9 +14,7 @@ namespace PrinterAgent.PrintingHandler
     {
         protected override void Print(string printerName, string filePath)
         {
-            var gsHomeDir=Path.GetFullPath(RegistryDataResolver.GetGhostScriptHomePath());
-            
-            byte[] buffer = File.ReadAllBytes(gsHomeDir+ "\\bin\\gsdll32.dll");
+            byte[] buffer = File.ReadAllBytes("gsdll32.dll");
 
             using (GhostscriptProcessor processor = new GhostscriptProcessor(buffer))
             {
@@ -33,6 +31,7 @@ namespace PrinterAgent.PrintingHandler
                 switches.Add("-f");
                 switches.Add(filePath);
 
+                Logger.LogInfo(string.Concat(switches," "));
                 processor.StartProcessing(switches.ToArray(), null);
             }
         }

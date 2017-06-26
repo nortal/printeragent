@@ -15,7 +15,7 @@ namespace PrinterAgent.Test
             //var reqContent = Convert.ToBase64String(bytes);
             //var reqContent = Convert.ToBase64String(Serialize(@"C: \Users\jevgenisa\Desktop\Learning Material\Java\Java study material\ch08.pdf"));
             var htmlFilePath = @"C:\Users\jevgenisa\Desktop\printagentimage.html";
-            var reqContent = Convert.ToBase64String(Serialize(@"C:\Users\jevgenisa\Desktop\pdf.pdf"));
+            var reqContent = Convert.ToBase64String(Serialize(@"C:\Users\jevgenisa\Desktop\test.pdf"));
 
             var content = "<img src=\"http://localhost:56789/api/print-jobs/dummy.png?"+
                 "document=" + reqContent+
