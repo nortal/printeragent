@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Ghostscript.NET.Processor;
@@ -17,7 +18,7 @@ namespace PrinterAgent.PrintingHandler
 
         protected override void Print(string printerName, string filePath)
         {
-            byte[] buffer = File.ReadAllBytes("gsdll32.dll");
+            byte[] buffer = File.ReadAllBytes(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)+"\\gsdll32.dll");
 
             using (GhostscriptProcessor processor = new GhostscriptProcessor(buffer))
             {
