@@ -15,8 +15,7 @@ namespace PrinterAgent.Test
         [TestMethod]
         public void Print()
         {
-            //string printerName = "Bullzip PDF Printer";
-            string printerName = "\\\\tarp\\3 floor corridor printer";
+            string printerName = "Bullzip PDF Printer";         
             string filePath = @"C:\Users\jevgenisa\Desktop\pdf.pdf";
 
             byte[] bytes = File.ReadAllBytes(filePath);
