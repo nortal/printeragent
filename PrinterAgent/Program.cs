@@ -47,7 +47,7 @@ namespace PrinterAgent
             while (true)
             {
                 Thread.Sleep(3000);
-                var status = MainServiceStarter.MainService?.Status;
+                var status = MainServiceStarter.GetStatus();
                 if (form.Status != status)
                     form.Status = status;
             }

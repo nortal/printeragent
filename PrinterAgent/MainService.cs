@@ -10,7 +10,7 @@ namespace PrinterAgent
 {
     public static class MainServiceStarter
     {
-        public static MainService MainService;
+        private static MainService MainService;
 
         public static void Start()
         {
@@ -35,18 +35,31 @@ namespace PrinterAgent
 
         static void SystemEvents_SessionSwitch(object sender, SessionSwitchEventArgs e)
         {
-            if (e.Reason == SessionSwitchReason.SessionLock)
+            Logger.LogInfo(e.Reason.ToString());
+
+            switch (e.Reason)
             {
-                Logger.LogInfo("Processing lock");
-                MainService.Stop();
-                
+                case SessionSwitchReason.SessionLock:
+                case SessionSwitchReason.ConsoleDisconnect:
+                    Logger.LogInfo("Processing lock/disconnect");
+                    MainService.Stop();
+                    MainService = null;
+                    break;
+
+                case SessionSwitchReason.SessionUnlock:
+                case SessionSwitchReason.ConsoleConnect:
+                    Logger.LogInfo("Processing unlock/connect");
+                    if (MainService == null) { 
+                        MainService = new MainService();
+                        MainService.Start();
+                    }
+                    break;
             }
-            if (e.Reason == SessionSwitchReason.SessionUnlock)
-            {
-                Logger.LogInfo("Processing unlock");
-                MainService = new MainService();
-                MainService.Start();
-            }
+        }
+
+        public static string GetStatus()
+        {
+            return MainService?.Status;
         }
     }
 
