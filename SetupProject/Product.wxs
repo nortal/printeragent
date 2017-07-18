@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
   <?define PrinterAgent_TargetDir=$(var.PrinterAgent.TargetDir)?>
   <Product Id="*" Name="Printer Agent" Language="1033" Version="!(bind.FileVersion.PrinterAgent.exe)" Manufacturer="Nortal" UpgradeCode="87b44ae3-51c9-4ed3-85b6-af14c22aa416">
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Description="Version:!(bind.FileVersion.PrinterAgent.exe)" />
@@ -31,7 +31,7 @@
       </Dialog>
 
       <Dialog Id="PcsUrlIdError" Width="260" Height="85" NoMinimize="no" Title="[ProductName]">
-        <Control Id="PcsUrlIdErrorDesc" Type="Text" Width="194" Height="30" X="48" Y="15" Text="Please enter a Pcs URL and GhostScript home directory." />
+        <Control Id="PcsUrlIdErrorDesc" Type="Text" Width="194" Height="30" X="48" Y="15" Text="Please enter a Pcs URL" />
         <Control Id="PcsUrlIdErrorOk" Type="PushButton" X="97" Y="57" Width="56" Height="17" Text="Ok">
           <Publish Event="EndDialog" Value="Return">1</Publish>
         </Control>
@@ -43,7 +43,8 @@
     <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch Printer Agent" />
     <Property Id="WixShellExecTarget" Value="[#PrinterAgent.exe]" />
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
-    
+	<Property Id="ARPNOREPAIR" Value="yes" Secure="yes" />
+	  
     <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
     
     <MajorUpgrade Schedule="afterInstallValidate" AllowDowngrades="no" DowngradeErrorMessage="A newer version of [ProductName] is already installed." AllowSameVersionUpgrades="yes" />
@@ -54,9 +55,9 @@
       <ComponentRef Id="RegistryEntries" />
       <ComponentGroupRef Id="ProductMenuComponents" />
     </Feature>
-	  
-	  
-    
+
+
+	  <util:CloseApplication Target="PrinterAgent.exe" RebootPrompt="no" TerminateProcess="100"/>
   </Product>
   
 
@@ -91,6 +92,7 @@
         
       </Component>
     </DirectoryRef>
+	  
   </Fragment>
 
 	<Fragment>
