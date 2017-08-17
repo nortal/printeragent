@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Security;
 using PrinterAgent.Service;
 
 namespace PrinterAgent.Util
@@ -42,6 +43,20 @@ namespace PrinterAgent.Util
         public static string ComposeMessage(string type, string message)
         {
             return string.Format("{0}: {1}\\{2}{3}{4}", type, Environment.UserDomainName, Environment.UserName, Environment.NewLine, message);
+        }
+
+        public static bool UserHasRights()
+        {
+            try
+            {
+
+                LogInfo("Print Agent - Verifying event log permissions");
+            }
+            catch (SecurityException)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

@@ -13,8 +13,7 @@ namespace PrinterAgent
         private static MainService MainService;
 
         public static void Start()
-        {
-            
+        {           
             ConfigurationManager.AppSettings["PrinterConfigurationBaseUrl"] = RegistryDataResolver.GetPcsUrl();
             SetupSessionSwitchEventHandler();
             MainService = new MainService();

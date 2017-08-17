@@ -17,8 +17,10 @@ namespace PrinterAgent
         [STAThread]
         static void Main()
         {
-            EnsureOneInstanceIsRunning();
-            
+            if (!Logger.UserHasRights())
+                return;
+
+            EnsureOneInstanceIsRunning();            
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.ApplicationExit += CloseApp;
@@ -41,6 +43,7 @@ namespace PrinterAgent
             }
                 
         }
+
 
         private static void UpdateWidgetStatus(Form1 form)
         {
