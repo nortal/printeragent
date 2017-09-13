@@ -45,7 +45,7 @@ namespace PrinterAgent.PrintingHandler
 
                 Logger.LogInfo("GS StdOut:\n" + callback.OutLog);
                 if (!string.IsNullOrEmpty(callback.ErrorLog))
-                    Logger.LogInfo("GS StdError:\n" + callback.ErrorLog);
+                    Logger.LogError("GS StdError:\n" + callback.ErrorLog);
                 
                 Logger.LogInfo(string.Join(" ", switches));
             }
