@@ -38,8 +38,8 @@ namespace PrinterAgent.PrintingHandler
                 switches.Add("-sOutputFile=%printer%" + printerName);
                 switches.Add("-f");
                 switches.Add(filePath);
+                Logger.LogInfo(string.Join(" ", switches));
 
-                
                 var callback = new CallbackStdIO();
                 processor.StartProcessing(switches.ToArray(), callback);
 
@@ -47,7 +47,7 @@ namespace PrinterAgent.PrintingHandler
                 if (!string.IsNullOrEmpty(callback.ErrorLog))
                     Logger.LogError("GS StdError:\n" + callback.ErrorLog);
                 
-                Logger.LogInfo(string.Join(" ", switches));
+                
             }
         }
 
