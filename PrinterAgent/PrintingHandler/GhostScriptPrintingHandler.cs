@@ -6,7 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Ghostscript.NET;
 using Ghostscript.NET.Processor;
 using PrinterAgent.Util;
 
@@ -37,10 +39,43 @@ namespace PrinterAgent.PrintingHandler
                 switches.Add("-f");
                 switches.Add(filePath);
 
-                Logger.LogInfo(string.Concat(switches," "));
-                processor.StartProcessing(switches.ToArray(), null);
+                
+                var callback = new CallbackStdIO();
+                processor.StartProcessing(switches.ToArray(), callback);
+
+                Logger.LogInfo("GS StdOut:\n" + callback.OutLog);
+                if (!string.IsNullOrEmpty(callback.ErrorLog))
+                    Logger.LogInfo("GS StdError:\n" + callback.ErrorLog);
+                
+                Logger.LogInfo(string.Join(" ", switches));
             }
         }
-        
+
+
+        private class CallbackStdIO : GhostscriptStdIO
+        {
+            public string OutLog = "";
+            public string ErrorLog = "";
+            public CallbackStdIO() : base(false, true, true)
+            {
+            }
+
+            public override void StdIn(out string input, int count)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override void StdOut(string output)
+            {
+                OutLog += output+Environment.NewLine;
+            }
+
+            public override void StdError(string error)
+            {
+                ErrorLog += error + Environment.NewLine;
+                
+            }
+        }
+
     }
 }
