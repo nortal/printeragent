@@ -9,7 +9,7 @@ namespace PrinterAgent.PrintConfigurationSystem
 {
     public class PrinterConfigurationClient
     {
-        private static readonly string HostUrl = ConfigurationManager.AppSettings["PrinterConfigurationBaseUrl"];
+        private readonly string HostUrl = ConfigurationManager.AppSettings["PrinterConfigurationBaseUrl"];
 
         private HttpClient CreateClient()
         {
