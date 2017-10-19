@@ -9,14 +9,22 @@ namespace PrinterAgent.DTO
         [JsonProperty("document-type")]
         public string DocumentType { get; set; }
         [JsonProperty("document"), JsonRequired]
-        [JsonConverter(typeof(UrlSafeBase64Converter))]
-        public byte[] Document { get; set; }
-        [JsonProperty("signature"), JsonRequired]
+        public string Document { get; set; }
+        [JsonProperty("signature")]
         [JsonConverter(typeof(UrlSafeBase64Converter))]
         public byte[] Signature { get; set; }
-        [JsonProperty("signature-algorithm"), JsonRequired]
+        [JsonProperty("signature-algorithm")]
         public string SignatureAlgorithm { get; set; }
-        [JsonProperty("hash-algorithm"), JsonRequired]
+        [JsonProperty("hash-algorithm")]
         public string HashAlgorithm { get; set; }
+
+        [JsonProperty("batchNr"), JsonRequired]
+        public int BatchNr { get; set; }
+
+        [JsonProperty("batchesTotal"), JsonRequired]
+        public int BatchesTotal { get; set; }
+
+        [JsonProperty("printId"), JsonRequired]
+        public string PrintId { get; set; }
     }
 }

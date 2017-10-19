@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
-using PrinterAgent.DTO;
-using PrinterAgent.PrintConfigurationSystem.DTO;
 
-namespace PrinterAgent.Util
+namespace PrinterAgent.Cache
 {
-    public class CachedPrintConfiguration
+    public class PrintConfigurationCache
     {
         private static List<string> lastSentPrinters;
         private static readonly object padlock1 = new object();

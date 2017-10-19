@@ -5,7 +5,9 @@ using System.Drawing.Printing;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Windows.Forms;
+using PrinterAgent.Cache;
 using PrinterAgent.DTO;
+using PrinterAgent.Model;
 using PrinterAgent.PrintConfigurationSystem;
 using PrinterAgent.PrintConfigurationSystem.DTO;
 using PrinterAgent.Util;
@@ -71,13 +73,13 @@ namespace PrinterAgent.Service
         
         
 
-        public SignatureVerificationResponseDto CheckSignature(PrintRequestDto request)
+        public SignatureVerificationResponseDto CheckSignature(byte[] document, string hashAlg, byte[] signature, string signAlg)
         {
             var response = pcsClient.CheckSignature(new SignatureVerificationRequestDto()
             {
-                DocumentHash = CreateHash(request.Document, request.HashAlgorithm),
-                HashSignature = Convert.ToBase64String(request.Signature),
-                EncryptionAlgorithm = request.SignatureAlgorithm
+                DocumentHash = CreateHash(document, hashAlg),
+                HashSignature = Convert.ToBase64String(signature),
+                EncryptionAlgorithm = signAlg
             });
             return response;
 
@@ -103,7 +105,7 @@ namespace PrinterAgent.Service
             var response = pcsClient.CreateConfiguration(request);
             if (response != null)
             {
-                CachedPrintConfiguration.LastSentPrinters = request.Printers;
+                PrintConfigurationCache.LastSentPrinters = request.Printers;
             }
             return response;
             
@@ -140,7 +142,7 @@ namespace PrinterAgent.Service
             var response = pcsClient.UpdateConfiguration(secret, request);
             if (response != null)
             {
-                CachedPrintConfiguration.LastSentPrinters = request.Printers;
+                PrintConfigurationCache.LastSentPrinters = request.Printers;
             }
             
         }

@@ -102,6 +102,7 @@
     </Reference>
     <Reference Include="System.Printing" />
     <Reference Include="System.Security" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -114,6 +115,7 @@
   <ItemGroup>
     <Compile Include="DTO\CheckDocumentTypeDto.cs" />
     <Compile Include="DTO\PingRequestDto.cs" />
+    <Compile Include="Model\PrintRequest.cs" />
     <Compile Include="PrintConfigurationSystem\DTO\PrintConfigurationDto.cs" />
     <Compile Include="DTO\PrintRequestDto.cs" />
     <Compile Include="PrintConfigurationSystem\DTO\SignatureVerificationDto.cs" />
@@ -136,12 +138,13 @@
     <Compile Include="SocketServer\HttpRequestHandler.cs" />
     <Compile Include="SocketServer\SocketServer.cs" />
     <Compile Include="SocketServer\TcpRequestHandler.cs" />
+    <Compile Include="Cache\PrintRequestsCache.cs" />
     <Compile Include="Util\DataProtector.cs" />
     <Compile Include="PrintConfigurationSystem\HttpRequestHandler.cs" />
     <Compile Include="Util\ImageDrawer.cs" />
     <Compile Include="Util\Logger.cs" />
     <Compile Include="Util\PrintAgentException.cs" />
-    <Compile Include="Util\CachedPrintConfiguration.cs" />
+    <Compile Include="Cache\PrintConfigurationCache.cs" />
     <Compile Include="Util\PrinterManager.cs" />
     <Compile Include="Util\RegistryDataResolver.cs" />
     <Compile Include="Util\UrlSafeBase64Converter.cs" />

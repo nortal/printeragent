@@ -5,6 +5,7 @@ using System.Drawing.Printing;
 using System.Net;
 using System.Net.Sockets;
 using System.Windows.Forms;
+using PrinterAgent.Cache;
 using PrinterAgent.DTO;
 using PrinterAgent.PrintConfigurationSystem.DTO;
 using PrinterAgent.Util;
@@ -17,12 +18,12 @@ namespace PrinterAgent.Service
         public static string GetPrinterAgentId()
         {
             
-            if (string.IsNullOrEmpty(CachedPrintConfiguration.Secret))
+            if (string.IsNullOrEmpty(PrintConfigurationCache.Secret))
             {
-                CachedPrintConfiguration.Secret = RegistryDataResolver.GetStoredPrinterAgentId();  
+                PrintConfigurationCache.Secret = RegistryDataResolver.GetStoredPrinterAgentId();  
             }
             
-            return CachedPrintConfiguration.Secret;
+            return PrintConfigurationCache.Secret;
         }
         
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Threading;
+using PrinterAgent.Cache;
 using PrinterAgent.Util;
 
 namespace PrinterAgent.Service
@@ -36,7 +37,7 @@ namespace PrinterAgent.Service
 
         private void UpdateBackendConfIfRequired()
         {
-            var lastSentPrinters = CachedPrintConfiguration.LastSentPrinters!=null ? CachedPrintConfiguration.LastSentPrinters.OrderBy(x => x).ToList() : null;
+            var lastSentPrinters = PrintConfigurationCache.LastSentPrinters!=null ? PrintConfigurationCache.LastSentPrinters.OrderBy(x => x).ToList() : null;
 
             var localPrinters = PrinterManager.GetAvailablePrinters().OrderBy(x => x).ToList();
 

@@ -3,7 +3,9 @@ using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using PrinterAgent.Cache;
 using PrinterAgent.DTO;
+using PrinterAgent.Model;
 using PrinterAgent.PrintingHandler;
 using PrinterAgent.Util;
 
@@ -13,24 +15,50 @@ namespace PrinterAgent.Service
     public class PrinterAgentService
     {
         private static readonly bool SkipSignatureVerification = bool.Parse(ConfigurationManager.AppSettings["SkipSignatureVerification"]);
-        
+        private static readonly int AcceptBatchesTimeoutSeconds = int.Parse(ConfigurationManager.AppSettings["AcceptBatchesTimeoutSeconds"]);
+
 
         private readonly PrinterConfigurationService printConfService = new PrinterConfigurationService();
 
         public string Print(PrintRequestDto request)
         {
-            if (!SkipSignatureVerification)
-                VerifySignature(request);
+            StoreBatch(request);
+
+            if (request.BatchNr != request.BatchesTotal)
+                return null;
+            
+            var aggregatedRequest = CreateAggregatedRequest(request.PrintId);
+            var document = aggregatedRequest.GetDecodedDocument();
+
+            VerifySignature(document, request.HashAlgorithm, request.Signature, request.SignatureAlgorithm);
 
             string printerName = GetPrinterName(request.DocumentType);
-            
-            Logger.LogInfo("Printing using printer: "+ printerName);
-            new GhostScriptPrintingHandler().Print(printerName, request.Document);
+
+            Logger.LogInfo("Printing using printer: " + printerName);
+            new GhostScriptPrintingHandler().Print(printerName, document);
 
             return printerName;
         }
-        
-        
+
+        private void StoreBatch(PrintRequestDto request)
+        {
+            PrintRequestsCache.AddBatch(request);
+        }
+
+        private PrintRequest CreateAggregatedRequest(string printId)
+        {
+            var printRequest = PrintRequestsCache.GetPrintRequestInProgress(printId);
+            var startTime = DateTime.Now;
+
+            while (printRequest.HasMissingBatches()) { 
+                if ((DateTime.Now - startTime).TotalSeconds >= AcceptBatchesTimeoutSeconds)
+                    throw new ForbiddenException("Accept batches timeout");
+                Thread.Sleep(100);
+            }
+            return printRequest;
+
+        }
+
         private string GetPrinterName(string documentType)
         {
             var printerByDocType = GetPrinterNameByDocType(documentType);
@@ -55,9 +83,12 @@ namespace PrinterAgent.Service
             return printer;
         }
 
-        private void VerifySignature(PrintRequestDto request)
+        private void VerifySignature(byte[] document, string hashAlg, byte[] signature, string signAlg)
         {
-           if(printConfService.CheckSignature(request)?.Verified == true)
+            if (SkipSignatureVerification)
+                return;
+            var verification = printConfService.CheckSignature(document, hashAlg, signature, signAlg);
+            if (verification!=null && verification.Verified == true)
                 return;
             
             throw new UnathorizedException("Signature verification failed");
