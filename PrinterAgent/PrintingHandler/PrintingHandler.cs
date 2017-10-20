@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using PrinterAgent.Cache;
 
 namespace PrinterAgent.PrintingHandler
 {
@@ -13,9 +14,9 @@ namespace PrinterAgent.PrintingHandler
     {
         private static readonly string TempFilePrefix = ConfigurationManager.AppSettings["TempFilePrefix"];
 
-        public void Print(string printerName, byte[] document)
+        public void Print(string printerName, byte[] document, string id)
         {
-            var filePath = StoreFile(document);
+            var filePath = StoreFile(document, id);
             //new Thread(() =>{
                 try
                 {
@@ -24,16 +25,17 @@ namespace PrinterAgent.PrintingHandler
                 finally
                 {
                     RemoveFile(filePath);
+                    PrintRequestsCache.RemoveRequestInProgress(id);
                 }
             //}).Start();
         }
 
         protected abstract void Print(string printerName, string filePath);
         
-        private string StoreFile(byte[] document)
+        private string StoreFile(byte[] document, string id)
         {
             var tempPath = Path.GetTempPath();
-            var filePath = tempPath + TempFilePrefix + Guid.NewGuid() + ".pdf";
+            var filePath = tempPath + TempFilePrefix + id + ".pdf";
 
             File.WriteAllBytes(filePath, document);
             return filePath;

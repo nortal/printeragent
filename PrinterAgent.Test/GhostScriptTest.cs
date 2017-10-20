@@ -16,11 +16,11 @@ namespace PrinterAgent.Test
         public void Print()
         {
             string printerName = "Bullzip PDF Printer";         
-            string filePath = @"C:\Users\jevgenisa\Desktop\pdf.pdf";
+            string filePath = @"C:\Users\jevgenisa\Desktop\test_095.pdf";
 
             byte[] bytes = File.ReadAllBytes(filePath);
 
-            new GhostScriptPrintingHandler().Print(printerName, bytes);
+            new GhostScriptPrintingHandler().Print(printerName, bytes, Guid.NewGuid().ToString());
         }
     }
 }

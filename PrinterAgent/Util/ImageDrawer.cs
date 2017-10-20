@@ -21,7 +21,7 @@ namespace PrinterAgent.Util
         public static byte[] DrawImage(string text)
         {
             if (text == null)
-                text = "";
+                text = ".";
 
             var fontFamily = new FontFamily(FontFamily);
             var font = new Font(fontFamily, FontSizePixels, FontStyle.Bold, GraphicsUnit.Pixel);

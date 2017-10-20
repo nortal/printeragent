@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using PrinterAgent.Cache;
 using PrinterAgent.DTO;
 using PrinterAgent.Model;
@@ -22,12 +23,13 @@ namespace PrinterAgent.Service
 
         public string Print(PrintRequestDto request)
         {
+            var printId = request.PrintId;
             StoreBatch(request);
 
             if (request.BatchNr != request.BatchesTotal)
                 return null;
-            
-            var aggregatedRequest = CreateAggregatedRequest(request.PrintId);
+
+            var aggregatedRequest = CreateAggregatedRequest(printId);
             var document = aggregatedRequest.GetDecodedDocument();
 
             VerifySignature(document, request.HashAlgorithm, request.Signature, request.SignatureAlgorithm);
@@ -35,14 +37,21 @@ namespace PrinterAgent.Service
             string printerName = GetPrinterName(request.DocumentType);
 
             Logger.LogInfo("Printing using printer: " + printerName);
-            new GhostScriptPrintingHandler().Print(printerName, document);
+            new GhostScriptPrintingHandler().Print(printerName, document, printId);
 
             return printerName;
+            
         }
 
         private void StoreBatch(PrintRequestDto request)
         {
-            PrintRequestsCache.AddBatch(request);
+            var isTheFirstRequest = PrintRequestsCache.AddBatch(request);
+            if (!isTheFirstRequest)
+                return;
+
+            Task.Delay(TimeSpan.FromSeconds(AcceptBatchesTimeoutSeconds*2))
+                .ContinueWith(t => PrintRequestsCache.RemoveRequestInProgress(request.PrintId));
+            
         }
 
         private PrintRequest CreateAggregatedRequest(string printId)
