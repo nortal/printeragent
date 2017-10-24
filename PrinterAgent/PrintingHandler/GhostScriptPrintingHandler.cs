@@ -16,7 +16,7 @@ namespace PrinterAgent.PrintingHandler
 {
     public class GhostScriptPrintingHandler : PrintingHandler
     {
-        private static readonly string BitsPerPixel = ConfigurationManager.AppSettings["BitsPerPixel"];
+        private static readonly string GsCommand = ConfigurationManager.AppSettings["GhostScriptSwitches"];
 
         protected override void Print(string printerName, string filePath)
         {
@@ -24,24 +24,12 @@ namespace PrinterAgent.PrintingHandler
 
             using (GhostscriptProcessor processor = new GhostscriptProcessor(buffer))
             {
-                List<string> switches = new List<string>();
-                switches.Add("-empty");
-                switches.Add("-dPrinted");
-                switches.Add("-dBATCH");
-                switches.Add("-dSAFER");
-                switches.Add("-dNoCancel");
-                switches.Add("-dNOPAUSE");
-                if (!string.IsNullOrEmpty(BitsPerPixel))
-                    switches.Add("-dBitsPerPixel="+ BitsPerPixel);
-
-                switches.Add("-sDEVICE=mswinpr2");
-                switches.Add("-sOutputFile=%printer%" + printerName);
-                switches.Add("-f");
-                switches.Add(filePath);
+                var switches = GsCommand.Split(' ').Select(s => s.Replace("{printerName}", printerName).Replace("{fileName}", filePath)).ToArray();
+                
                 Logger.LogInfo(string.Join(" ", switches));
 
                 var callback = new CallbackStdIO();
-                processor.StartProcessing(switches.ToArray(), callback);
+                processor.StartProcessing(switches, callback);
 
                 Logger.LogInfo("GS StdOut:\n" + callback.OutLog);
                 if (!string.IsNullOrEmpty(callback.ErrorLog))
