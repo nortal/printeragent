@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace PrinterAgent.Test
 {
     [TestClass]
-    public class UnitTest1
+    public class HtmlGenerator
     {
 
         [TestMethod]

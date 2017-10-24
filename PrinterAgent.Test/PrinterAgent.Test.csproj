@@ -67,7 +67,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="GhostScriptTest.cs" />
-    <Compile Include="UnitTest1.cs" />
+    <Compile Include="HtmlGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
