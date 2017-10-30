@@ -59,9 +59,8 @@ namespace PrinterAgentServer.Service
         }
         
 
-        public string Ping(PingRequestDto pingRequest)
+        public void Ping(PingRequestDto pingRequest)
         {
-            return GetPrinterName(pingRequest.DocumentType);
         }
 
         public void CheckDocumentType(CheckDocumentTypeDto pingRequest)
