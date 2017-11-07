@@ -123,7 +123,7 @@ namespace PrinterAgentServer.Service
         {
             var request = new PrintConfigurationRequestDto();
             request.Name = GetCurrentComputerName();
-            request.AgentVersion = Application.ProductVersion;
+            request.AgentVersion = RegistryDataResolver.GetAgentVersion();
             request.Printers = PrinterManager.GetAvailablePrinters();
             return request;
 

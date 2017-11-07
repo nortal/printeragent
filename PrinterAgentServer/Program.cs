@@ -12,14 +12,31 @@ namespace PrinterAgentServer
 
         public static void Main(string[] args)
         {
-            int port;
-            if (args.Length==0 || !int.TryParse(args[0], out port))
-                throw new System.Exception("No port specified");
+            int port = 0;
+            int parentProcessId = 0;
 
-            int parentProcessId;
-            if (args.Length > 1 && int.TryParse(args[1], out parentProcessId))
+            foreach (var a in args)
+            {
+                var arg=a.Split('=');
+                if (arg.Length!=2)
+                    continue;
+                var paramName = arg[0];
+                var paramValue = arg[1];
+                if (paramName.Equals(CommandSwitch.Port, StringComparison.InvariantCultureIgnoreCase))
+                    int.TryParse(paramValue, out port);
+                else if (paramName.Equals(CommandSwitch.ParentProcessId, StringComparison.InvariantCultureIgnoreCase))
+                    int.TryParse(paramValue, out parentProcessId);
+            }
+
+            
+            if (port <= 0)
+                throw new System.Exception("No valid port specified");
+                        
+            if (parentProcessId > 0)
                 new ParentProcessMonitor(parentProcessId).Start();
 
+
+            
             ConfigurationManager.AppSettings["PrinterConfigurationBaseUrl"] = RegistryDataResolver.GetPcsUrl();
 
             var confPollerTask = new Task(() => new ConfigurationUpdater().Poll());

@@ -63,11 +63,13 @@
   <ItemGroup>
     <Reference Include="Ghostscript.NET, Version=1.2.1.0, Culture=neutral, PublicKeyToken=f85051de34525b59, processorArchitecture=MSIL">
       <HintPath>..\packages\Ghostscript.NET.1.2.1\lib\net40\Ghostscript.NET.dll</HintPath>
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
@@ -84,14 +86,11 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Security" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandSwitch.cs" />
     <Compile Include="DTO\CheckDocumentTypeDto.cs" />
     <Compile Include="DTO\PingRequestDto.cs" />
     <Compile Include="Exception\AgentFatalException.cs" />
@@ -118,7 +117,7 @@
     <Compile Include="PrintConfigurationSystem\HttpRequestHandler.cs" />
     <Compile Include="Util\ImageDrawer.cs" />
     <Compile Include="Util\Logger.cs" />
-    <Compile Include="Util\PrintAgentException.cs" />
+    <Compile Include="Exception\PrintAgentException.cs" />
     <Compile Include="Util\CachedPrintConfiguration.cs" />
     <Compile Include="Util\PrinterManager.cs" />
     <Compile Include="Util\RegistryDataResolver.cs" />

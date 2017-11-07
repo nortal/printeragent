@@ -74,6 +74,8 @@
     <ProjectReference Include="..\PrinterAgentServer\PrinterAgentServer.csproj">
       <Project>{BEB1913A-1AB0-48F9-B97D-E0B6EFE1C6B1}</Project>
       <Name>PrinterAgentServer</Name>
+      <Private>True</Private>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

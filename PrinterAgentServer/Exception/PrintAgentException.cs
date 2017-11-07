@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace PrinterAgentServer.Util
+﻿namespace PrinterAgentServer.Exception
 {
     public class UnathorizedException : System.Exception
     {

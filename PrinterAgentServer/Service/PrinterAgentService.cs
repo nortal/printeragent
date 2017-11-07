@@ -1,5 +1,6 @@
 ﻿using System.Configuration;
 using PrinterAgentServer.DTO;
+using PrinterAgentServer.Exception;
 using PrinterAgentServer.PrintingHandler;
 using PrinterAgentServer.Util;
 

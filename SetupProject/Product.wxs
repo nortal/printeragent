@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
 	<?define PrinterAgentApp_TargetDir=$(var.PrinterAgentApp.TargetDir)?>
-	<?define PrinterAgentServer_TargetDir=$(var.PrinterAgentServer.TargetDir)?>
   <Product Id="*" Name="Printer Agent" Language="1033" Version="!(bind.FileVersion.PrinterAgentApp.exe)" Manufacturer="Nortal" UpgradeCode="87b44ae3-51c9-4ed3-85b6-af14c22aa416">
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Description="Version:!(bind.FileVersion.PrinterAgentApp.exe)" />
     <UI>
@@ -84,7 +83,9 @@
           <RegistryValue Name="PcsUrl" Type="string" Value="[PCS_URL]">
             <Permission User="Users" GenericAll="yes" />          
           </RegistryValue>
-			
+	        <RegistryValue Name="Version" Type="string" Value="[ProductVersion]">
+		        <Permission User="Users" GenericAll="yes" />
+	        </RegistryValue>
         </RegistryKey>
         
         <RegistryKey Root="HKLM" Key="Software\Microsoft\Windows\CurrentVersion\Run">
@@ -122,9 +123,6 @@
 			
 			<Component Id="dummy.png" Guid="737f7bd1-2fab-4fa8-a0d3-61116588d7be">
 			  <File Id="dummy.png" Name="dummy.png" Source="$(var.PrinterAgentApp_TargetDir)dummy.png" />
-			</Component>
-			<Component Id="System.Net.Http.dll" Guid="03a1dd94-8b2a-4048-825d-c08632e9c264">
-			  <File Id="System.Net.Http.dll" Name="System.Net.Http.dll" Source="$(var.PrinterAgentServer_TargetDir)System.Net.Http.dll" />
 			</Component>
 			<Component Id="Ghostscript.NET.dll" Guid="766627b1-c3b5-4679-9410-268578446e89">
 			  <File Id="Ghostscript.NET.dll" Name="Ghostscript.NET.dll" Source="$(var.PrinterAgentApp_TargetDir)Ghostscript.NET.dll" />

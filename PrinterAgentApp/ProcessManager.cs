@@ -7,6 +7,7 @@ using System.Reflection.Emit;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Win32;
+using PrinterAgentServer;
 using PrinterAgentServer.Exception;
 using PrinterAgentServer.Service;
 using PrinterAgentServer.SocketServer;
@@ -80,7 +81,7 @@ namespace PrinterAgentApp
                 } while (port == null);
             }
 
-            printAgentProcess.StartInfo.Arguments = $"{port} {Process.GetCurrentProcess().Id}";
+            printAgentProcess.StartInfo.Arguments = $"{CommandSwitch.Port}={port} {CommandSwitch.ParentProcessId}={Process.GetCurrentProcess().Id}";
             printAgentProcess.Start();
             Program.SetStatus("Local server is running on port " + port);
             printAgentProcess.WaitForExit();
