@@ -16,10 +16,10 @@ namespace PrinterAgent.Test
         public void Print()
         {
             //string printerName = "HP LaserJet Professional P1606dn";
-            string printerName = "Bullzip PDF Printer";
-            //string printerName = "\\\\tarp\\3 floor corridor printer";
-            string filePath = @"C:\Users\jevgenisa\Desktop\test_095.pdf";
-            //string filePath = @"C:\Users\jevgenisa\Desktop\pdf.pdf";
+            //string printerName = "ZDesigner ZD410-203dpi ZPL";
+            string printerName = "\\\\tarp\\3 floor corridor printer";
+            //string filePath = @"C:\Users\jevgenisa\Desktop\test_095.pdf";
+            string filePath = @"C:\Users\jevgenisa\Desktop\pdf.pdf";
             byte[] bytes = File.ReadAllBytes(filePath);
 
             new GhostScriptPrintingHandler().Print(printerName, bytes);

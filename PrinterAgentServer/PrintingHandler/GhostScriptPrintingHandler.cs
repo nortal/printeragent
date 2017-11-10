@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using Ghostscript.NET;
 using Ghostscript.NET.Processor;
 using PrinterAgentServer.Util;
@@ -11,7 +13,7 @@ namespace PrinterAgentServer.PrintingHandler
 {
     public class GhostScriptPrintingHandler : PrintingHandler
     {
-        private static readonly string GsCommand = ConfigurationManager.AppSettings["GhostScriptSwitches"];
+        private static readonly string[] GsCommandSwitches = ConfigurationManager.AppSettings["GhostScriptSwitches"].Split(',');
 
         protected override void Print(string printerName, string filePath)
         {
@@ -19,7 +21,7 @@ namespace PrinterAgentServer.PrintingHandler
 
             using (GhostscriptProcessor processor = new GhostscriptProcessor(buffer))
             {
-                var switches = GsCommand.Split(' ').Select(s => s.Replace("{printerName}", printerName).Replace("{fileName}", filePath)).ToArray();
+                var switches = GsCommandSwitches.Select(s=> s.Replace("{printerName}", printerName).Replace("{fileName}", filePath)).ToArray();                
                 
                 Logger.LogInfo(string.Join(" ", switches));
 
