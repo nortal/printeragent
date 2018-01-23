@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading;
@@ -17,14 +18,15 @@ namespace PrinterAgentApp
 {
     public static class ProcessManager
     {
-        private static readonly Process printAgentProcess = new Process();
-        private static bool _expectedServerKill;
+        private static readonly Process PrintAgentProcess = new Process();
+
+        private static readonly int[] NonFatalExceptions = {(int)AgentExceptionCode.AgentDisabled};
 
         static ProcessManager(){
             ConfigurationManager.AppSettings["PrinterConfigurationBaseUrl"] = RegistryDataResolver.GetPcsUrl();           
-            printAgentProcess.StartInfo.FileName = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\PrinterAgentServer.exe";
-            printAgentProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            printAgentProcess.StartInfo.UseShellExecute = true;
+            PrintAgentProcess.StartInfo.FileName = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\PrinterAgentServer.exe";
+            PrintAgentProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            PrintAgentProcess.StartInfo.UseShellExecute = true;
             
         }
 
@@ -34,30 +36,29 @@ namespace PrinterAgentApp
             {
                 Thread.Sleep(1000);
                 Logger.LogInfo("Main service started");
-                while (true)
+
+                int exitCode;
+                do
                 {
-                    var exitCode = Run();
+                    exitCode = Run();
                     Logger.LogInfo("Exit code received from PrinterAgentServer: " + exitCode);
-                    if (exitCode == (int) AgentExceptionCode.AgentDisabled)
+                    switch (exitCode)
                     {
-                        Program.SetStatus("Agent has been disabled. Shutting down.");
+                        case (int)AgentExceptionCode.AgentDisabled:
+                            Program.SetStatus("Agent has been disabled. Shutting down.");
+                            break;
+                        case (int)AgentExceptionCode.SpoolerNotRunning:
+                            Program.SetStatus("Spooler is not running. Shutting down.");
+                            break;
+                        default:
+                            Program.SetStatus("Shutting down since unexpected error occured");
+                            break;
                     }
-                    else if (exitCode == (int) AgentExceptionCode.SpoolerNotRunning)
-                    {
-                        Program.SetStatus("Spooler is not running. Shutting down.");
-                        Environment.Exit(exitCode);
-                    }
-                    else if (_expectedServerKill)
-                    {
-                        _expectedServerKill = false;
-                        break;
-                    }
-                    else
-                    {
-                        Program.SetStatus("Shutting down since unexpected error occured");
-                        Environment.Exit(0);
-                    }
-                }
+                    
+                } while (NonFatalExceptions.Contains(exitCode));
+
+                Environment.Exit(exitCode);
+
             }
             catch (ThreadInterruptedException)
             {
@@ -67,6 +68,18 @@ namespace PrinterAgentApp
         }
 
         private static int Run()
+        {
+            var port = GetNetworkingPort();
+
+            PrintAgentProcess.StartInfo.Arguments = $"{CommandSwitch.Port}={port} {CommandSwitch.ParentProcessId}={Process.GetCurrentProcess().Id}";
+            PrintAgentProcess.Start();
+            Program.SetStatus("Local server is running on port " + port);
+            PrintAgentProcess.WaitForExit();
+
+            return PrintAgentProcess.ExitCode;
+        }
+
+        private static int? GetNetworkingPort()
         {
             PrinterConfigurationService pcsService = new PrinterConfigurationService();
 
@@ -81,29 +94,21 @@ namespace PrinterAgentApp
                 } while (port == null);
             }
 
-            printAgentProcess.StartInfo.Arguments = $"{CommandSwitch.Port}={port} {CommandSwitch.ParentProcessId}={Process.GetCurrentProcess().Id}";
-            printAgentProcess.Start();
-            Program.SetStatus("Local server is running on port " + port);
-            printAgentProcess.WaitForExit();
-
-            return printAgentProcess.ExitCode;
+            return port;
         }
-        
-        public static void Stop()
+
+
+        private static void Stop()
         {
             try
             {
-                if (!printAgentProcess.HasExited)
-                {
-
-                    _expectedServerKill = true;
-                    printAgentProcess.Kill();
-                    Logger.LogInfo("Process killed");
-                }
+                Logger.LogInfo("Killing server process");
+                PrintAgentProcess.Kill();
+                Logger.LogInfo("Server process killed");
             }
-            catch
+            catch (InvalidOperationException e)
             {
-                // ignored
+                Logger.LogInfo(e.ToString());
             }
         }
     }

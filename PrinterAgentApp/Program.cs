@@ -10,7 +10,7 @@ namespace PrinterAgentApp
     static class Program
     {
         private static Form _form;
-        private static Thread _app;
+        private static Thread _appThread;
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -29,8 +29,7 @@ namespace PrinterAgentApp
             {
                 EnsureUserHasEventViewerRights();
                 EnsureOneInstanceIsRunning();
-                _app = new Thread(ProcessManager.Start);
-                _app.Start();
+                StartAppThread();
             };
 
             SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;
@@ -66,19 +65,34 @@ namespace PrinterAgentApp
             {
                 case SessionSwitchReason.SessionLock:
                 case SessionSwitchReason.ConsoleDisconnect:
-                    Logger.LogInfo("Processing lock/disconnect");                    
-                    _app.Interrupt();
+                    Logger.LogInfo("Processing lock/disconnect");
+                    StopAppThread();
                     break;
 
                 case SessionSwitchReason.SessionUnlock:
                 case SessionSwitchReason.ConsoleConnect:
                     Logger.LogInfo("Processing unlock/connect");
-                    _app = new Thread(ProcessManager.Start);
-                    _app.Start();
+                    StartAppThread();
                     break;
             }
         }
 
+        private static void StartAppThread()
+        {
+            if (_appThread==null || !_appThread.IsAlive)
+            {
+                _appThread = new Thread(ProcessManager.Start);
+                _appThread.Start();
+            }
+        }
+
+        private static void StopAppThread()
+        {
+            if (_appThread!=null && _appThread.IsAlive)
+            {
+                _appThread.Interrupt();
+            }
+        }
 
         public static void SetStatus(string status)
         {
@@ -94,7 +108,7 @@ namespace PrinterAgentApp
         public static void CloseApp()
         {
             Logger.LogInfo("Shutting down");
-            ProcessManager.Stop();
+            StopAppThread();
             Environment.Exit(0);
         }
     }
