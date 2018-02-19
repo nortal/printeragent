@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using PrinterAgentServer.Util;
 
 namespace PrinterAgentServer.SocketServer
 {
@@ -34,7 +35,8 @@ namespace PrinterAgentServer.SocketServer
                     {
                         var tcpMessage = GetTcpMessage(clientConnection, stream);
                         var request = ParseTcpMessageToRequest(tcpMessage);
-
+                        if (request==null)
+                            return;
                         var response = new HttpRequestHandler(request).HandleRequest();
 
                         var tcpResponse = CreateResponse(response.status, response.body, response.headers);
@@ -63,7 +65,7 @@ namespace PrinterAgentServer.SocketServer
 
             var httpRequestLine = new string(messageChars, 0, requestLineEnd);
 
-            Regex regex = new Regex(@"^(?<method>[A-Z]*) (?<query>.*?)(\?(?<params>.*))? (?<protocol>HTTP\/1\.1)$");
+            Regex regex = new Regex(@"^(?<method>[A-Z]*) (?<query>.*?)(\?(?<params>.*))? (?<protocol>HTTP\/.*)$");
             var match = regex.Match(httpRequestLine);
             if (!match.Success)
                 return null;
