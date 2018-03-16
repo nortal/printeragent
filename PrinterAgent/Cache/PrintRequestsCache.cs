@@ -10,7 +10,7 @@ namespace PrinterAgent.Cache
         private static readonly List<PrintRequest> PrintRequestsInProgress = new List<PrintRequest>();
         private static readonly object Padlock1 = new object();
 
-        public static bool AddBatch(PrintRequestDto requestDto)
+        public static bool AddBatch(BacthedPrintRequestDto requestDto)
         {
             lock (Padlock1)
             {

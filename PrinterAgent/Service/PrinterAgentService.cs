@@ -21,7 +21,7 @@ namespace PrinterAgent.Service
 
         private readonly PrinterConfigurationService printConfService = new PrinterConfigurationService();
 
-        public string Print(PrintRequestDto request)
+        public string BatchedPrint(BacthedPrintRequestDto request)
         {
             var printId = request.PrintId;
             StoreBatch(request);
@@ -43,7 +43,7 @@ namespace PrinterAgent.Service
             
         }
 
-        private void StoreBatch(PrintRequestDto request)
+        private void StoreBatch(BacthedPrintRequestDto request)
         {
             var isTheFirstRequest = PrintRequestsCache.AddBatch(request);
             if (!isTheFirstRequest)

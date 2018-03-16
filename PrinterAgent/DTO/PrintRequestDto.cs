@@ -4,7 +4,7 @@ using PrinterAgent.Util;
 namespace PrinterAgent.DTO
 {
     [JsonObject]
-    public class PrintRequestDto
+    public class BacthedPrintRequestDto
     {
         [JsonProperty("document-type")]
         public string DocumentType { get; set; }

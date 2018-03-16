@@ -24,10 +24,10 @@ namespace PrinterAgent.SocketServer
         {
             switch (request.method+" "+request.query)
             {
-                case "GET /api/print-jobs/dummy.png":
+                case "GET /api/print-jobs/print.png":
                     return Print();
                 case "GET /api/print-jobs/ping.png":
-                    return Ping();
+                    return Ping();                
                 case "GET /api/print-jobs/check-doctype.png":
                     return CheckDocumentType();
             }
@@ -75,8 +75,8 @@ namespace PrinterAgent.SocketServer
             try
             {
                 string json = JsonConvert.SerializeObject(request.parameters, Formatting.Indented);
-                var printRequest = JsonConvert.DeserializeObject<PrintRequestDto>(json);
-                printerName=new PrinterAgentService().Print(printRequest);
+                var printRequest = JsonConvert.DeserializeObject<BacthedPrintRequestDto>(json);
+                printerName=new PrinterAgentService().BatchedPrint(printRequest);
             }
             catch (UnathorizedException e)
             {
