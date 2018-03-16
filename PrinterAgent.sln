@@ -1,18 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrinterAgent.Test", "PrinterAgent.Test\PrinterAgent.Test.csproj", "{7A368FA6-7DE8-44C3-A694-02E8465C5494}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrinterAgentServer.Test", "PrinterAgentServer.Test\PrinterAgentServer.Test.csproj", "{7A368FA6-7DE8-44C3-A694-02E8465C5494}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrinterAgent", "PrinterAgent\PrinterAgent.csproj", "{BEB1913A-1AB0-48F9-B97D-E0B6EFE1C6B1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrinterAgentServer", "PrinterAgentServer\PrinterAgentServer.csproj", "{BEB1913A-1AB0-48F9-B97D-E0B6EFE1C6B1}"
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Setup", "SetupProject\Setup.wixproj", "{07DBE224-D3DF-407F-9473-F862846D16A1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrinterAgentApp", "PrinterAgentApp\PrinterAgentApp.csproj", "{B2D06978-3CD6-4F34-9D7F-66831F3423C1}"
+EndProject
 Global
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		CD_ROM|Any CPU = CD_ROM|Any CPU
 		CD_ROM|x86 = CD_ROM|x86
@@ -84,8 +83,31 @@ Global
 		{07DBE224-D3DF-407F-9473-F862846D16A1}.SingleImage|Any CPU.Build.0 = Release|x86
 		{07DBE224-D3DF-407F-9473-F862846D16A1}.SingleImage|x86.ActiveCfg = Release|x86
 		{07DBE224-D3DF-407F-9473-F862846D16A1}.SingleImage|x86.Build.0 = Release|x86
+		{B2D06978-3CD6-4F34-9D7F-66831F3423C1}.CD_ROM|Any CPU.ActiveCfg = Release|Any CPU
+		{B2D06978-3CD6-4F34-9D7F-66831F3423C1}.CD_ROM|Any CPU.Build.0 = Release|Any CPU
+		{B2D06978-3CD6-4F34-9D7F-66831F3423C1}.CD_ROM|x86.ActiveCfg = Release|Any CPU
+		{B2D06978-3CD6-4F34-9D7F-66831F3423C1}.CD_ROM|x86.Build.0 = Release|Any CPU
+		{B2D06978-3CD6-4F34-9D7F-66831F3423C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2D06978-3CD6-4F34-9D7F-66831F3423C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2D06978-3CD6-4F34-9D7F-66831F3423C1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B2D06978-3CD6-4F34-9D7F-66831F3423C1}.Debug|x86.Build.0 = Debug|Any CPU
+		{B2D06978-3CD6-4F34-9D7F-66831F3423C1}.DVD-5|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2D06978-3CD6-4F34-9D7F-66831F3423C1}.DVD-5|Any CPU.Build.0 = Debug|Any CPU
+		{B2D06978-3CD6-4F34-9D7F-66831F3423C1}.DVD-5|x86.ActiveCfg = Debug|Any CPU
+		{B2D06978-3CD6-4F34-9D7F-66831F3423C1}.DVD-5|x86.Build.0 = Debug|Any CPU
+		{B2D06978-3CD6-4F34-9D7F-66831F3423C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2D06978-3CD6-4F34-9D7F-66831F3423C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2D06978-3CD6-4F34-9D7F-66831F3423C1}.Release|x86.ActiveCfg = Release|Any CPU
+		{B2D06978-3CD6-4F34-9D7F-66831F3423C1}.Release|x86.Build.0 = Release|Any CPU
+		{B2D06978-3CD6-4F34-9D7F-66831F3423C1}.SingleImage|Any CPU.ActiveCfg = Release|Any CPU
+		{B2D06978-3CD6-4F34-9D7F-66831F3423C1}.SingleImage|Any CPU.Build.0 = Release|Any CPU
+		{B2D06978-3CD6-4F34-9D7F-66831F3423C1}.SingleImage|x86.ActiveCfg = Release|Any CPU
+		{B2D06978-3CD6-4F34-9D7F-66831F3423C1}.SingleImage|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal
