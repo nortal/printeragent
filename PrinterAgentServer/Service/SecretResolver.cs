@@ -1,14 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.DirectoryServices.ActiveDirectory;
-using System.Drawing.Printing;
-using System.Net;
-using System.Net.Sockets;
-using System.Windows.Forms;
-using PrinterAgent.Cache;
-using PrinterAgent.DTO;
-using PrinterAgent.PrintConfigurationSystem.DTO;
-using PrinterAgent.Util;
+﻿using PrinterAgentServer.Cache;
+using PrinterAgentServer.Util;
 
 namespace PrinterAgentServer.Service
 {

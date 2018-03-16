@@ -95,11 +95,20 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cache\PrintConfigurationCache.cs" />
+    <Compile Include="Cache\PrintRequestsCache.cs" />
     <Compile Include="CommandSwitch.cs" />
     <Compile Include="DTO\CheckDocumentTypeDto.cs" />
     <Compile Include="DTO\PingRequestDto.cs" />
-    <Compile Include="PrintConfigurationSystem\DTO\PrintConfigurationDto.cs" />
     <Compile Include="DTO\PrintRequestDto.cs" />
+    <Compile Include="Exception\AgentExceptionCode.cs" />
+    <Compile Include="Exception\AgentFatalException.cs" />
+    <Compile Include="Exception\PrintAgentException.cs" />
+    <Compile Include="Exception\SpoolerNotRunningException.cs" />
+    <Compile Include="Model\PrintRequest.cs" />
+    <Compile Include="ParentProcessMonitor.cs" />
+    <Compile Include="PrintConfigurationSystem\DTO\PrintConfigurationDto.cs" />
+    <Compile Include="DTO\BacthedPrintRequestDto.cs" />
     <Compile Include="PrintConfigurationSystem\DTO\SignatureVerificationDto.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="PrintingHandler\GhostScriptPrintingHandler.cs" />
@@ -114,13 +123,10 @@
     <Compile Include="SocketServer\HttpRequestHandler.cs" />
     <Compile Include="SocketServer\SocketServer.cs" />
     <Compile Include="SocketServer\TcpRequestHandler.cs" />
-    <Compile Include="Cache\PrintRequestsCache.cs" />
     <Compile Include="Util\DataProtector.cs" />
     <Compile Include="PrintConfigurationSystem\HttpRequestHandler.cs" />
     <Compile Include="Util\ImageDrawer.cs" />
     <Compile Include="Util\Logger.cs" />
-    <Compile Include="Util\PrintAgentException.cs" />
-    <Compile Include="Util\CachedPrintConfiguration.cs" />
     <Compile Include="Util\PrinterManager.cs" />
     <Compile Include="Util\RegistryDataResolver.cs" />
     <Compile Include="Util\UrlSafeBase64Converter.cs" />
@@ -144,6 +150,7 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="printer-agent - Shortcut.lnk" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

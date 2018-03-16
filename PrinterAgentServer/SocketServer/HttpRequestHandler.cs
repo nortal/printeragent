@@ -26,6 +26,8 @@ namespace PrinterAgentServer.SocketServer
                 {
                     case "GET /api/print-jobs/dummy.png":
                         return Print();
+                    case "GET /api/print-jobs/print.png":
+                        return BatchedPrint();
                     case "GET /api/print-jobs/ping.png":
                         return Ping();
                     case "GET /api/print-jobs/check-doctype.png":
@@ -83,6 +85,16 @@ namespace PrinterAgentServer.SocketServer
             
             return PrinterNameImageResponse(printerName);
             
+        }
+
+        private TcpMessageHttpResponse BatchedPrint()
+        {
+            string json = JsonConvert.SerializeObject(request.parameters, Formatting.Indented);
+            var printRequest = JsonConvert.DeserializeObject<BacthedPrintRequestDto>(json);
+            var printerName = new PrinterAgentService().BatchedPrint(printRequest);
+
+            return PrinterNameImageResponse(printerName);
+
         }
 
         private TcpMessageHttpResponse PrinterNameImageResponse(string printerName)

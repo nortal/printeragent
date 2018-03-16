@@ -1,13 +1,15 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using PrinterAgent.Cache;
-using PrinterAgent.DTO;
-using PrinterAgent.Model;
-using PrinterAgent.PrintingHandler;
-using PrinterAgent.Util;
+using PrinterAgentServer.Cache;
+using PrinterAgentServer.DTO;
+using PrinterAgentServer.Exception;
+using PrinterAgentServer.Model;
+using PrinterAgentServer.PrintingHandler;
+using PrinterAgentServer.Util;
 
 
 namespace PrinterAgentServer.Service
@@ -40,6 +42,18 @@ namespace PrinterAgentServer.Service
 
             return printerName;
             
+        }
+
+        public string Print(PrintRequestDto printRequest)
+        {
+            VerifySignature(printRequest.Document, printRequest.HashAlgorithm, printRequest.Signature, printRequest.SignatureAlgorithm);
+
+            string printerName = GetPrinterName(printRequest.DocumentType);
+
+            Logger.LogInfo("Printing using printer: " + printerName);
+            new GhostScriptPrintingHandler().Print(printerName, printRequest.Document, Guid.NewGuid().ToString());
+
+            return printerName;
         }
 
         private void StoreBatch(BacthedPrintRequestDto request)
@@ -114,6 +128,8 @@ namespace PrinterAgentServer.Service
             if (string.IsNullOrEmpty(printerByDocType))
                 throw new ForbiddenException("There is no printer set for the current document type");
         }
+
+        
     }
     
 }

@@ -2,8 +2,8 @@
 using System.Configuration;
 using System.Linq;
 using System.Threading;
-using PrinterAgent.Cache;
-using PrinterAgent.Util;
+using PrinterAgentServer.Cache;
+using PrinterAgentServer.Util;
 
 namespace PrinterAgentServer.Service
 {

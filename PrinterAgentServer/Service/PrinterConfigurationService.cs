@@ -1,15 +1,12 @@
 ﻿using System;
 using System.DirectoryServices.ActiveDirectory;
-using System.Runtime.Remoting.Messaging;
 using System.Security.Cryptography;
 using System.Threading;
-using System.Windows.Forms;
-using PrinterAgent.Cache;
-using PrinterAgent.DTO;
-using PrinterAgent.Model;
-using PrinterAgent.PrintConfigurationSystem;
-using PrinterAgent.PrintConfigurationSystem.DTO;
-using PrinterAgent.Util;
+using PrinterAgentServer.Cache;
+using PrinterAgentServer.Exception;
+using PrinterAgentServer.PrintConfigurationSystem;
+using PrinterAgentServer.PrintConfigurationSystem.DTO;
+using PrinterAgentServer.Util;
 
 namespace PrinterAgentServer.Service
 {
