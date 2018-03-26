@@ -110,6 +110,7 @@
     <Compile Include="PrintConfigurationSystem\DTO\PrintConfigurationDto.cs" />
     <Compile Include="DTO\BacthedPrintRequestDto.cs" />
     <Compile Include="PrintConfigurationSystem\DTO\SignatureVerificationDto.cs" />
+    <Compile Include="PrintingHandler\SumatraScriptPrintingHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="PrintingHandler\GhostScriptPrintingHandler.cs" />
     <Compile Include="PrintingHandler\PrintingHandler.cs" />

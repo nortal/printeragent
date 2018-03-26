@@ -28,6 +28,8 @@ namespace PrinterAgentServer.SocketServer
                         return Print();
                     case "GET /api/print-jobs/print.png":
                         return BatchedPrint();
+                    case "GET /api/print-jobs/sumatra/print.png":
+                        return BatchedSumatraPrint();
                     case "GET /api/print-jobs/ping.png":
                         return Ping();
                     case "GET /api/print-jobs/check-doctype.png":
@@ -96,7 +98,15 @@ namespace PrinterAgentServer.SocketServer
             return PrinterNameImageResponse(printerName);
 
         }
+        private TcpMessageHttpResponse BatchedSumatraPrint()
+        {
+            string json = JsonConvert.SerializeObject(request.parameters, Formatting.Indented);
+            var printRequest = JsonConvert.DeserializeObject<BacthedPrintRequestDto>(json);
+            var printerName = new PrinterAgentService().BatchedSumatraPrint(printRequest);
 
+            return PrinterNameImageResponse(printerName);
+
+        }
         private TcpMessageHttpResponse PrinterNameImageResponse(string printerName)
         {
             var content = ImageDrawer.DrawImage(printerName);

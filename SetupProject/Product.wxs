@@ -130,6 +130,9 @@
 			<Component Id="gsdll32.dll" Guid="766627b1-c3b5-4679-9410-268578446e90">
 				<File Id="gsdll32.dll" Name="gsdll32.dll" Source="lib\gsdll32.dll" />
 			</Component>
+			<Component Id="SumatraPDF.exe" Guid="766627b1-c3b5-4679-9411-268578446e90">
+				<File Id="SumatraPDF.exe" Name="SumatraPDF.exe" Source="lib\SumatraPDF.exe" />
+			</Component>
 		</ComponentGroup>
 	</Fragment>
 

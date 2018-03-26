@@ -24,7 +24,7 @@ namespace PrinterAgent.Test
             {
                 var batch = new string(base64.Take(i * batchSize + batchSize).Skip(i * batchSize).ToArray());
 
-                htmlContent += "<img src=\"http://localhost:56789/api/print-jobs/dummy.png?";
+                htmlContent += "<img src=\"http://localhost:56789/api/print-jobs/print.png?";
                 htmlContent += "document=" + batch;                
                 htmlContent += "&";
                 htmlContent += "document-type=SINGLE_BARCODE";

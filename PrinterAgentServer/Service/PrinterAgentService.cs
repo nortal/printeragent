@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 using PrinterAgentServer.Cache;
 using PrinterAgentServer.DTO;
 using PrinterAgentServer.Exception;
@@ -22,7 +23,16 @@ namespace PrinterAgentServer.Service
 
         private readonly PrinterConfigurationService printConfService = new PrinterConfigurationService();
 
-        public string BatchedPrint(BacthedPrintRequestDto request)
+        public string BatchedPrint(BacthedPrintRequestDto printRequest)
+        {
+            return BatchedPrint(printRequest, new GhostScriptPrintingHandler());
+        }
+        public string BatchedSumatraPrint(BacthedPrintRequestDto printRequest)
+        {
+            return BatchedPrint(printRequest, new SumatraPrintingHandler());
+        }
+
+        private string BatchedPrint(BacthedPrintRequestDto request, PrintingHandler.PrintingHandler printingHandler)
         {
             var printId = request.PrintId;
             StoreBatch(request);
@@ -38,11 +48,12 @@ namespace PrinterAgentServer.Service
             string printerName = GetPrinterName(request.DocumentType);
 
             Logger.LogInfo("Printing using printer: " + printerName);
-            new GhostScriptPrintingHandler().Print(printerName, document, printId);
+            printingHandler.Print(printerName, document, printId);
 
             return printerName;
             
         }
+        
 
         public string Print(PrintRequestDto printRequest)
         {
@@ -128,6 +139,7 @@ namespace PrinterAgentServer.Service
             if (string.IsNullOrEmpty(printerByDocType))
                 throw new ForbiddenException("There is no printer set for the current document type");
         }
+
 
         
     }
