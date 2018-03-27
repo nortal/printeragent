@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.IO;
+using System.Threading;
 using PrinterAgentServer.Cache;
 
 namespace PrinterAgentServer.PrintingHandler
@@ -12,7 +13,7 @@ namespace PrinterAgentServer.PrintingHandler
         public void Print(string printerName, byte[] document, string id)
         {
             var filePath = StoreFile(document, id);
-            //new Thread(() =>{
+            new Thread(() =>{
                 try
                 {
                     Print(printerName, filePath);
@@ -22,7 +23,7 @@ namespace PrinterAgentServer.PrintingHandler
                     RemoveFile(filePath);
                     PrintRequestsCache.RemoveRequestInProgress(id);
                 }
-            //}).Start();
+            }).Start();
         }
 
         protected abstract void Print(string printerName, string filePath);

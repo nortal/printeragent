@@ -15,7 +15,7 @@ namespace PrinterAgent.Test
         {
                         
             var htmlFilePath = @"C:\Users\jevgenisa\Desktop\printagentimage.html";
-            var base64 = Convert.ToBase64String(Serialize(@"C:\Users\jevgenisa\Desktop\Oracle Certified Professional Java SE 7 Programmer Exams 1Z0-804 and 1Z0-805 A Comprehensive OCPJP 7 Certification Guide.pdf"));
+            var base64 = Convert.ToBase64String(Serialize(@"C:\Users\jevgenisa\Desktop\car rental form.pdf"));
             var batchSize = 10000;
             var batchesTotal = (int) Math.Ceiling(base64.Length / (float) batchSize);
             var printId = Guid.NewGuid();
@@ -24,7 +24,7 @@ namespace PrinterAgent.Test
             {
                 var batch = new string(base64.Take(i * batchSize + batchSize).Skip(i * batchSize).ToArray());
 
-                htmlContent += "<img src=\"http://localhost:56789/api/print-jobs/print.png?";
+                htmlContent += "<img src=\"http://localhost:56789/api/print-jobs/sumatra/print.png?";
                 htmlContent += "document=" + batch;                
                 htmlContent += "&";
                 htmlContent += "document-type=SINGLE_BARCODE";
